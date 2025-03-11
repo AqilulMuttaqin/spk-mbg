@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\KriteriaController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\WilayahController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -17,10 +19,15 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/dashboard', function () {
-        return view('dashboard');
-    });
+        return view('dashboard', [
+            'title' => 'Dashboard'
+        ]);
+    })->name('dashboard');
 
-    
+    Route::get('/kriteria', [KriteriaController::class, 'index'])->name('kriteria.index');
+    Route::post('/kriteria', [KriteriaController::class, 'store'])->name('kriteria.store');
+    Route::put('/kriteria/{kriteria}', [KriteriaController::class, 'update'])->name('kriteria.update');
+    Route::delete('/kriteria/{kriteria}', [KriteriaController::class, 'destroy'])->name('kriteria.destroy');
 });
 
 require __DIR__.'/auth.php';

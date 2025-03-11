@@ -16,7 +16,7 @@
                     <span class="hide-menu">Home</span>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link active" href="#" aria-expanded="false">
+                    <a class="sidebar-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}" aria-expanded="false">
                         <span>
                             <i class="ti ti-home"></i>
                         </span>
@@ -28,7 +28,7 @@
                     <span class="hide-menu">Pages</span>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="#" aria-expanded="false">
+                    <a class="sidebar-link {{ request()->routeIs('kriteria.index') ? 'active' : '' }}" href="{{ route('kriteria.index') }}" aria-expanded="false">
                         <span>
                             <i class="ti ti-list"></i>
                         </span>
