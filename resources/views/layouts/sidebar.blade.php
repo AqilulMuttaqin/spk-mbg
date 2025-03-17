@@ -36,7 +36,7 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="#" aria-expanded="false">
+                    <a class="sidebar-link {{ request()->routeIs('wilayah.index') ? 'active' : '' }}" href="{{ route('wilayah.index') }}" aria-expanded="false">
                         <span>
                             <i class="ti ti-map"></i>
                         </span>

@@ -123,7 +123,8 @@
                         url: '{{ url()->current() }}',
                         type: 'GET'
                     },
-                    columns: [{
+                    columns: [
+                        {
                             data: 'DT_RowIndex',
                             name: 'DT_RowIndex'
                         },

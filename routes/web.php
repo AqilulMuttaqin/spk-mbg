@@ -28,6 +28,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/kriteria', [KriteriaController::class, 'store'])->name('kriteria.store');
     Route::put('/kriteria/{kriteria}', [KriteriaController::class, 'update'])->name('kriteria.update');
     Route::delete('/kriteria/{kriteria}', [KriteriaController::class, 'destroy'])->name('kriteria.destroy');
+
+    Route::get('/wilayah', [WilayahController::class, 'index'])->name('wilayah.index');
 });
 
 require __DIR__.'/auth.php';
