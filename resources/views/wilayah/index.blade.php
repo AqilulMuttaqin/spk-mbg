@@ -3,7 +3,7 @@
 @section('content')
     <div class="row">
         <div class="col-lg-6 d-flex align-items-stretch">
-            <div class="card">
+            <div class="card w-100">
                 <div class="card-header">
                     <div class="row">
                         <div class="col-sm-6">
@@ -18,7 +18,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body h-100 d-flex flex-column">
                     <div class="table-responsive mb-auto">
                         <table class="table table-striped w-100" id="dataKecamatan">
                             <thead>
@@ -36,8 +36,8 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-6">
-            <div class="card">
+        <div class="col-lg-6 d-flex align-items-stretch">
+            <div class="card w-100">
                 <div class="card-header">
                     <div class="row">
                         <div class="col-sm-6">
@@ -52,7 +52,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body h-100 d-flex flex-column">
                     <div class="table-responsive mb-auto">
                         <table class="table table-striped w-100" id="dataKelurahan">
                             <thead>
@@ -102,6 +102,29 @@
         </div>
     </div>
 
+    <div class="modal fade" id="wilayahKecamatanModal" tabindex="-1" role="dialog" aria-labelledby="wilayahKecamatanModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="wilayahKecamatanModalLabel"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="wilayahKecamatanForm">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="nama_kecamatan">Nama Kecamatan</label>
+                            <input type="text" class="form-control form-control-user" id="nama_kecamatan" name="nama_kecamatan" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submmit" class="btn btn-sm btn-primary" id="submitBtn">Save Change</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     @push('script')
         <script>
             $(document).ready(function() {
@@ -111,7 +134,7 @@
                     }
                 });
 
-                $('#dataKecamatan').DataTable({
+                var tableKecamatan = $('#dataKecamatan').DataTable({
                     processing: true,
                     serverSide: true,
                     scrollX: true,
@@ -137,13 +160,15 @@
                             orderable: false,
                             searchable: false,
                             render: function(data, type, row, meta) {
+                                var deleteRoute = "{{ route('wilayah.kecamatan.destroy', ':kecamatan') }}";
+                                var deleteUrl = deleteRoute.replace(':kecamatan', row.id);
                                 return `
                                     <div class="d-flex justify-content-center text-nowrap gap-2">
                                         <button type="button" class="btn btn-sm btn-outline-info edit-btn" data-js="${row.id}">
                                             <i class="ti ti-edit me-1"></i>
                                             Edit
                                         </button>
-                                        <form action="" method="POST">
+                                        <form action="${deleteUrl}" method="POST">
                                             @csrf
                                             @method('DELETE')
                                             <button type="button" class="btn btn-sm btn-outline-danger confirm-delete">
@@ -250,6 +275,76 @@
                             }
                         }
                     ]
+                });
+                
+                function resetFormFields() {
+                    $('#nama_kecamatan').val('');
+                }
+    
+                $('#tambahDataKecamatan').on('click', function() {
+                    resetFormFields();
+                    $('#submitBtn').text('Submit');
+                    $('#wilayahKecamatanModalLabel').text('Tambah Data Kecamatan');
+                    $('#wilayahKecamatanForm').attr('action', "{{ route('wilayah.kecamatan.store') }}");
+                    $('#wilayahKecamatanForm').attr('method', 'POST');
+    
+                    $('#wilayahKecamatanModal').modal('show');
+                });
+    
+                $('#dataKecamatan').on('click', '.edit-btn', function() {
+                    var id = $(this).data('js');
+                    var rowData = tableKecamatan.row($(this).parents('tr')).data();
+    
+                    $('#nama_kecamatan').val(rowData.nama_kecamatan);
+                    $('#submitBtn').text('Update');
+                    $('#wilayahKecamatanModalLabel').text('Edit Data Kecamatan');
+                    $('#wilayahKecamatanForm').attr('action', '{{ route('wilayah.kecamatan.update', ['kecamatan' => ':kecamatan']) }}'.replace(':kecamatan', rowData.id));
+                    $('#wilayahKecamatanForm').attr('method', 'PUT');
+    
+                    $('#wilayahKecamatanModal').modal('show');
+                });
+
+                $('#dataKecamatan').on('click', '.confirm-delete', function() {
+                    var form = $(this).closest('form');
+                    var deleteUrl = form.attr('action');
+                    var currentPage = tableKecamatan.page();
+
+                    $.ajax({
+                        url: deleteUrl,
+                        type: 'DELETE',
+                        success: function(response) {
+                            tableKecamatan.ajax.reload();
+                            tableKecamatan.page(currentPage).draw('page');
+                        },
+                        error: function(xhr) {
+                            console.log('Error nich');
+                        }
+                    })
+                });
+            });
+
+            $('#wilayahKecamatanForm').on('submit', function(e) {
+                e.preventDefault();
+                var formData = $(this).serialize();
+                var url = $(this).attr('action');
+                var method = $(this).attr('method');
+                var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+                $.ajax({
+                    url: url,
+                    type: method,
+                    data: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    success: function(response) {
+                        $('#dataKecamatan').DataTable().ajax.reload();
+                        $('#wilayahKecamatanModal').modal('hide');
+                        console.log(response);
+                    },
+                    error: function(xhr) {
+                        console.log(xhr);
+                    }
                 });
             });
         </script>

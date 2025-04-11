@@ -65,4 +65,29 @@ class WilayahController extends Controller
             'kriteriaWilayah' => Kriteria::where('kategori', 'wilayah')->get(),
         ]);
     }
+
+    public function storeKecamatan(Request $request)
+    {
+        $request->validate([
+            'nama_kecamatan' => 'required|string|max:255',
+        ]);
+
+        WilayahKecamatan::create($request->all());
+    }
+
+    public function updateKecamatan(Request $request, $kecamatan)
+    {
+        $request->validate([
+            'nama_kecamatan' => 'required|string|max:255',
+        ]);
+
+        $kecamatan = WilayahKecamatan::findOrFail($kecamatan);
+        $kecamatan->update($request->all());
+    }
+
+    public function destroyKecamatan($kecamatan)
+    {
+        $kecamatan = WilayahKecamatan::findOrFail($kecamatan);
+        $kecamatan->delete();
+    }
 }

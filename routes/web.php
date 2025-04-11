@@ -30,6 +30,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/kriteria/{kriteria}', [KriteriaController::class, 'destroy'])->name('kriteria.destroy');
 
     Route::get('/wilayah', [WilayahController::class, 'index'])->name('wilayah.index');
+    Route::post('/wilayah-kecamatan', [WilayahController::class, 'storeKecamatan'])->name('wilayah.kecamatan.store');
+    Route::put('/wilayah-kecamatan/{kecamatan}', [WilayahController::class, 'updateKecamatan'])->name('wilayah.kecamatan.update');
+    Route::delete('/wilayah-kecamatan/{kecamatan}', [WilayahController::class, 'destroyKecamatan'])->name('wilayah.kecamatan.destroy');
+    Route::post('/wilayah-kelurahan', [WilayahController::class, 'storeKelurahan'])->name('wilayah.kelurahan.store');
+    Route::put('/wilayah-kelurahan/{kelurahan}', [WilayahController::class, 'updateKelurahan'])->name('wilayah.kelurahan.update');
+    Route::delete('/wilayah-kelurahan/{kelurahan}', [WilayahController::class, 'destroyKelurahan'])->name('wilayah.kelurahan.destroy');
 });
 
 require __DIR__.'/auth.php';
