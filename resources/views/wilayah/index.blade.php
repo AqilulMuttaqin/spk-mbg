@@ -118,7 +118,39 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submmit" class="btn btn-sm btn-primary" id="submitBtn">Save Change</button>
+                        <button type="submmit" class="btn btn-sm btn-primary" id="submitKecamatanBtn">Save Change</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="wilayahKelurahanModal" tabindex="-1" role="dialog" aria-labelledby="wilayahKelurahanModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="wilayahKelurahanModalLabel"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="wilayahKelurahanForm">
+                    <div class="modal-body">
+                        <div class="form-group mb-3">
+                            <label for="wilayah_kecamatan_id">Kecamatan</label>
+                            <select class="form-control form-control-user" name="wilayah_kecamatan_id" id="wilayah_kecamatan_id" required>
+                                <option value="" disabled selected></option>
+                                @foreach ($kecamatan as $kec)
+                                    <option value="{{ $kec->id }}">{{ $kec->nama_kecamatan }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="nama_kelurahan">Nama Kelurahan</label>
+                            <input type="text" class="form-control form-control-user" id="nama_kelurahan" name="nama_kelurahan" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submmit" class="btn btn-sm btn-primary" id="submitKelurahanBtn">Save Change</button>
                     </div>
                 </form>
             </div>
@@ -183,7 +215,7 @@
                     ]
                 });
 
-                $('#dataKelurahan').DataTable({
+                var tableKelurahan = $('#dataKelurahan').DataTable({
                     processing: true,
                     serverSide: true,
                     scrollX: true,
@@ -213,13 +245,15 @@
                             orderable: false,
                             searchable: false,
                             render: function(data, type, row, meta) {
+                                var deleteRoute = "{{ route('wilayah.kelurahan.destroy', ':kelurahan') }}";
+                                var deleteUrl = deleteRoute.replace(':kelurahan', row.id);
                                 return `
                                     <div class="d-flex justify-content-center text-nowrap gap-2">
                                         <button type="button" class="btn btn-sm btn-outline-info edit-btn" data-js="${row.id}">
                                             <i class="ti ti-edit me-1"></i>
                                             Edit
                                         </button>
-                                        <form action="" method="POST">
+                                        <form action="${deleteUrl}" method="POST">
                                             @csrf
                                             @method('DELETE')
                                             <button type="button" class="btn btn-sm btn-outline-danger confirm-delete">
@@ -234,7 +268,7 @@
                     ]
                 });
 
-                $('#dataKriteriaWilayah').DataTable({
+                var tableNilaiKriteiaWilayah = $('#dataKriteriaWilayah').DataTable({
                     processing: true,
                     serverSide: true,
                     scrollX: true,
@@ -279,16 +313,28 @@
                 
                 function resetFormFields() {
                     $('#nama_kecamatan').val('');
+                    $('#wilayah_kecamatan_id').val('');
+                    $('#nama_kelurahan').val('');
                 }
     
                 $('#tambahDataKecamatan').on('click', function() {
                     resetFormFields();
-                    $('#submitBtn').text('Submit');
+                    $('#submitKecamatanBtn').text('Submit');
                     $('#wilayahKecamatanModalLabel').text('Tambah Data Kecamatan');
                     $('#wilayahKecamatanForm').attr('action', "{{ route('wilayah.kecamatan.store') }}");
                     $('#wilayahKecamatanForm').attr('method', 'POST');
     
                     $('#wilayahKecamatanModal').modal('show');
+                });
+
+                $('#tambahDataKelurahan').on('click', function() {
+                    resetFormFields();
+                    $('#submitKelurahanBtn').text('Submit');
+                    $('#wilayahKelurahanModalLabel').text('Tambah Data Kelurahan');
+                    $('#wilayahKelurahanForm').attr('action', "{{ route('wilayah.kelurahan.store') }}");
+                    $('#wilayahKelurahanForm').attr('method', 'POST');
+    
+                    $('#wilayahKelurahanModal').modal('show');
                 });
     
                 $('#dataKecamatan').on('click', '.edit-btn', function() {
@@ -304,6 +350,20 @@
                     $('#wilayahKecamatanModal').modal('show');
                 });
 
+                $('#dataKelurahan').on('click', '.edit-btn', function() {
+                    var id = $(this).data('js');
+                    var rowData = tableKelurahan.row($(this).parents('tr')).data();
+    
+                    $('#nama_kelurahan').val(rowData.nama_kelurahan);
+                    $('#wilayah_kecamatan_id').val(rowData.wilayah_kecamatan_id);
+                    $('#submitKelurahanBtn').text('Update');
+                    $('#wilayahKelurahanModalLabel').text('Edit Data Kelurahan');
+                    $('#wilayahKelurahanForm').attr('action', '{{ route('wilayah.kelurahan.update', ['kelurahan' => ':kelurahan']) }}'.replace(':kelurahan', rowData.id));
+                    $('#wilayahKelurahanForm').attr('method', 'PUT');
+    
+                    $('#wilayahKelurahanModal').modal('show');
+                });
+
                 $('#dataKecamatan').on('click', '.confirm-delete', function() {
                     var form = $(this).closest('form');
                     var deleteUrl = form.attr('action');
@@ -315,6 +375,25 @@
                         success: function(response) {
                             tableKecamatan.ajax.reload();
                             tableKecamatan.page(currentPage).draw('page');
+                        },
+                        error: function(xhr) {
+                            console.log('Error nich');
+                        }
+                    })
+                });
+
+                $('#dataKelurahan').on('click', '.confirm-delete', function() {
+                    var form = $(this).closest('form');
+                    var deleteUrl = form.attr('action');
+                    var currentPage = tableKelurahan.page();
+
+                    $.ajax({
+                        url: deleteUrl,
+                        type: 'DELETE',
+                        success: function(response) {
+                            tableKelurahan.ajax.reload();
+                            tableNilaiKriteiaWilayah.ajax.reload();
+                            tableKelurahan.page(currentPage).draw('page');
                         },
                         error: function(xhr) {
                             console.log('Error nich');
@@ -339,7 +418,35 @@
                     },
                     success: function(response) {
                         $('#dataKecamatan').DataTable().ajax.reload();
+                        $('#dataKelurahan').DataTable().ajax.reload();
+                        $('#dataKriteriaWilayah').DataTable().ajax.reload();
                         $('#wilayahKecamatanModal').modal('hide');
+                        console.log(response);
+                    },
+                    error: function(xhr) {
+                        console.log(xhr);
+                    }
+                });
+            });
+
+            $('#wilayahKelurahanForm').on('submit', function(e) {
+                e.preventDefault();
+                var formData = $(this).serialize();
+                var url = $(this).attr('action');
+                var method = $(this).attr('method');
+                var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+                $.ajax({
+                    url: url,
+                    type: method,
+                    data: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    success: function(response) {
+                        $('#dataKelurahan').DataTable().ajax.reload();
+                        $('#dataKriteriaWilayah').DataTable().ajax.reload();
+                        $('#wilayahKelurahanModal').modal('hide');
                         console.log(response);
                     },
                     error: function(xhr) {

@@ -63,6 +63,7 @@ class WilayahController extends Controller
         return view('wilayah.index', [
             'title' => 'Wilayah',
             'kriteriaWilayah' => Kriteria::where('kategori', 'wilayah')->get(),
+            'kecamatan' => WilayahKecamatan::all(),
         ]);
     }
 
@@ -89,5 +90,32 @@ class WilayahController extends Controller
     {
         $kecamatan = WilayahKecamatan::findOrFail($kecamatan);
         $kecamatan->delete();
+    }
+
+    public function storeKelurahan(Request $request)
+    {
+        $request->validate([
+            'nama_kelurahan' => 'required|string|max:255',
+            'wilayah_kecamatan_id' => 'required|exists:wilayah_kecamatan,id',
+        ]);
+
+        WilayahKelurahan::create($request->all());
+    }
+
+    public function updateKelurahan(Request $request, $kelurahan)
+    {
+        $request->validate([
+            'nama_kelurahan' => 'required|string|max:255',
+            'wilayah_kecamatan_id' => 'required|exists:wilayah_kecamatan,id',
+        ]);
+
+        $kelurahan = WilayahKelurahan::findOrFail($kelurahan);
+        $kelurahan->update($request->all());
+    }
+
+    public function destroyKelurahan($kelurahan)
+    {
+        $kelurahan = WilayahKelurahan::findOrFail($kelurahan);
+        $kelurahan->delete();
     }
 }
