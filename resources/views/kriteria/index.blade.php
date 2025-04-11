@@ -46,8 +46,8 @@
                     <h5 class="modal-title" id="kriteriaModalLabel"></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <form id="kriteriaForm">
+                <form id="kriteriaForm">
+                    <div class="modal-body">
                         <div class="form-group mb-3">
                             <label for="nama_kriteria">Nama Kriteria</label>
                             <input type="text" class="form-control form-control-user" id="nama_kriteria" name="nama_kriteria" required>
@@ -96,12 +96,12 @@
                                 </div>
                             </div>
                         </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-sm btn-primary" id="submitBtn" onclick="submitKriteriaForm()">Save Change</button>
-                </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-sm btn-primary" id="submitBtn">Save Change</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -186,12 +186,12 @@
                         }
                     ]
                 });
-
+                
                 function toCamelCase(str) {
                     if (!str) return '';
                     return str.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('');
                 }
-
+    
                 function resetFormFields() {
                     $('#nama_kriteria').val('');
                     $('#kategori').val('');
@@ -200,21 +200,21 @@
                     $('#sifat').val('');
                     $('#bobot').val('');
                 }
-
+    
                 $('#tambahDataBtn').click(function() {
                     resetFormFields();
                     $('#submitBtn').text('Submit');
                     $('#kriteriaModalLabel').text('Tambah Kriteria');
-                    $('#kriteriaForm').attr('action', '{{ route('kriteria.store') }}');
+                    $('#kriteriaForm').attr('action', "{{ route('kriteria.store') }}");
                     $('#kriteriaForm').attr('method', 'POST');
-
+    
                     $('#kriteriaModal').modal('show');
                 });
-
+    
                 $('#dataKriteria').on('click', '.edit-btn', function() {
                     var id = $(this).data('id');
                     var rowData = table.row($(this).parents('tr')).data();
-
+    
                     $('#nama_kriteria').val(rowData.nama_kriteria);
                     $('#kategori').val(rowData.kategori);
                     $('#tipe').val(rowData.tipe);
@@ -225,15 +225,15 @@
                     $('#kriteriaModalLabel').text('Edit Kriteria');
                     $('#kriteriaForm').attr('action', '{{ route('kriteria.update', ['kriteria' => ':kriteria']) }}'.replace(':kriteria', rowData.id));
                     $('#kriteriaForm').attr('method', 'PUT');
-
+    
                     $('#kriteriaModal').modal('show');
                 });
-
+    
                 $('#dataKriteria').on('click', '.confirm-delete', function() {
                     var form = $(this).closest('form');
                     var deleteUrl = form.attr('action');
                     var currentPage = table.page();
-
+    
                     $.ajax({
                         url: deleteUrl,
                         type: 'DELETE',
@@ -248,10 +248,11 @@
                 });
             });
 
-            function submitKriteriaForm() {
-                var formData = $('#kriteriaForm').serialize();
-                var url = $('#kriteriaForm').attr('action');
-                var method = $('#kriteriaForm').attr('method');
+            $('#kriteriaForm').on('submit', function(e) {
+                e.preventDefault();
+                var formData = $(this).serialize();
+                var url = $(this).attr('action');
+                var method = $(this).attr('method');
                 var csrfToken = $('meta[name="csrf-token"]').attr('content');
 
                 $.ajax({
@@ -270,7 +271,7 @@
                         console.log('error nich');
                     }
                 });
-            }
+            });
         </script>
     @endpush
 @endsection

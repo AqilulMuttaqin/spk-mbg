@@ -52,7 +52,7 @@ class KriteriaController extends Controller
         $kriteria->update($request->all());
     }
 
-    public function destroy(Request $request, $kriteria)
+    public function destroy($kriteria)
     {
         $kriteria = Kriteria::findOrFail($kriteria);
         $kriteria->delete();
