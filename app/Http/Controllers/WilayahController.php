@@ -7,6 +7,7 @@ use App\Models\NilaiKriteriaWilayah;
 use App\Models\WilayahKecamatan;
 use App\Models\WilayahKelurahan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Yajra\DataTables\DataTables;
 
 class WilayahController extends Controller
@@ -117,5 +118,26 @@ class WilayahController extends Controller
     {
         $kelurahan = WilayahKelurahan::findOrFail($kelurahan);
         $kelurahan->delete();
+    }
+
+    public function updateNilaiKriteria(Request $request)
+    {
+        $namaKelurahan = $request->input('nama_kelurahan');
+        $wilayahKelurahanId = WilayahKelurahan::where('nama_kelurahan', $namaKelurahan)->first()->id;
+
+        foreach ($request->all() as $key => $value) {
+            if (Str::startsWith($key, 'kriteria-')) {
+                $kriteriaId = (int) Str::after($key, 'kriteria-');
+                NilaiKriteriaWilayah::updateOrCreate(
+                    [
+                        'wilayah_kelurahan_id' => $wilayahKelurahanId,
+                        'kriteria_id' => $kriteriaId,
+                    ],
+                    [
+                        'nilai' => $value !== null && $value !== '' ? $value : null,
+                    ]
+                );
+            }
+        }
     }
 }

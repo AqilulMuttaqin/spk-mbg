@@ -11,7 +11,7 @@ class NilaiKriteriaWilayah extends Model
 
     protected $table = 'nilai_kriteria_wilayah';
     protected $primaryKey = 'id';
-    protected $fillable = ['id', 'wilayah_kelurahan_id', 'kriteria_id', 'nilai_angka', 'nilai_non_angka'];
+    protected $fillable = ['id', 'wilayah_kelurahan_id', 'kriteria_id', 'nilai', 'nilai_non_angka'];
 
     public function wilayahKelurahan()
     {

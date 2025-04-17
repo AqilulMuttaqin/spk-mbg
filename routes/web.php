@@ -36,6 +36,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/wilayah-kelurahan', [WilayahController::class, 'storeKelurahan'])->name('wilayah.kelurahan.store');
     Route::put('/wilayah-kelurahan/{kelurahan}', [WilayahController::class, 'updateKelurahan'])->name('wilayah.kelurahan.update');
     Route::delete('/wilayah-kelurahan/{kelurahan}', [WilayahController::class, 'destroyKelurahan'])->name('wilayah.kelurahan.destroy');
+    Route::post('/nilai-kriteria-wilayah', [WilayahController::class, 'updateNilaiKriteria'])->name('wilayah.nilai-kriteria.update');
 });
 
 require __DIR__.'/auth.php';

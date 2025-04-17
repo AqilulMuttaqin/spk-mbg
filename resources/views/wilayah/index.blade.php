@@ -156,6 +156,50 @@
             </div>
         </div>
     </div>
+    
+    <div class="modal fade" id="nilaiKriteriaWilayahModal" tabindex="-1" role="dialog" aria-labelledby="nilaiKriteriaWilayahModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="nilaiKriteriaWilayahModalLabel"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="nilaiKriteriaWilayahForm">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-3">
+                                <p class="fw-bold">Kecamatan</p>
+                            </div>
+                            <div class="col-9">
+                                <p id="kecamatan"></p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-3">
+                                <p class="fw-bold">Kelurahan</p>
+                            </div>
+                            <div class="col-9">
+                                <p id="kelurahan"></p>
+                            </div>
+                        </div><hr>
+                        <p class="text-center fw-bold">Nilai Kriteria</p>
+                        <input type="hidden" class="form-control form-control-user" name="nama_kelurahan">
+                        @foreach ($kriteriaWilayah as $kW)
+                            <div class="form-group {{ !$loop->last ? 'mb-3' : '' }}">
+                                <label for="{{ $kW->id }}">{{ $kW->nama_kriteria }}</label>
+                                <input type="number" step="any" class="form-control form-control-user" id="{{ $kW->id }}" name="kriteria-{{ $kW->id }}">
+                            </div>
+                        @endforeach
+                        <hr>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submmit" class="btn btn-sm btn-primary" id="submitNilaiKriteriaWilayahBtn">Save Change</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     @push('script')
         <script>
@@ -294,16 +338,8 @@
                                     <div class="d-flex justify-content-center text-nowrap gap-2">
                                         <button type="button" class="btn btn-sm btn-outline-info edit-btn" data-js="${row.id}">
                                             <i class="ti ti-edit me-1"></i>
-                                            Edit
+                                            Update
                                         </button>
-                                        <form action="" method="POST">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="button" class="btn btn-sm btn-outline-danger confirm-delete">
-                                                <i class="ti ti-trash me-1"></i>
-                                                Delete
-                                            </button>
-                                        </form>
                                     </div>
                                 `;
                             }
@@ -362,6 +398,24 @@
                     $('#wilayahKelurahanForm').attr('method', 'PUT');
     
                     $('#wilayahKelurahanModal').modal('show');
+                });
+
+                $('#dataKriteriaWilayah').on('click', '.edit-btn', function() {
+                    var id = $(this).data('js');
+                    var rowData = tableNilaiKriteiaWilayah.row($(this).parents('tr')).data();
+    
+                    $('#kecamatan').text(': ' + rowData.kecamatan);
+                    $('#kelurahan').text(': ' + rowData.kelurahan);
+                    $('input[name="nama_kelurahan"]').val(rowData.kelurahan);
+                    @foreach ($kriteriaWilayah as $kriteria)
+                        $('#{{ $kriteria->id }}').val(rowData['{{ $kriteria->nama_kriteria }}']);
+                    @endforeach
+                    $('#submitNilaiKriteriaWilayahBtn').text('Update');
+                    $('#nilaiKriteriaWilayahModalLabel').text('Update Data Nilai Kriteria Wilayah');
+                    $('#nilaiKriteriaWilayahForm').attr('action', "{{ route('wilayah.nilai-kriteria.update') }}")
+                    $('#nilaiKriteriaWilayahForm').attr('method', 'POST');
+    
+                    $('#nilaiKriteriaWilayahModal').modal('show');
                 });
 
                 $('#dataKecamatan').on('click', '.confirm-delete', function() {
@@ -447,6 +501,31 @@
                         $('#dataKelurahan').DataTable().ajax.reload();
                         $('#dataKriteriaWilayah').DataTable().ajax.reload();
                         $('#wilayahKelurahanModal').modal('hide');
+                        console.log(response);
+                    },
+                    error: function(xhr) {
+                        console.log(xhr);
+                    }
+                });
+            });
+
+            $('#nilaiKriteriaWilayahForm').on('submit', function(e) {
+                e.preventDefault();
+                var formData = $(this).serialize();
+                var url = $(this).attr('action');
+                var method = $(this).attr('method');
+                var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+                $.ajax({
+                    url: url,
+                    type: method,
+                    data: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    success: function(response) {
+                        $('#dataKriteriaWilayah').DataTable().ajax.reload();
+                        $('#nilaiKriteriaWilayahModal').modal('hide');
                         console.log(response);
                     },
                     error: function(xhr) {
