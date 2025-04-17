@@ -38,7 +38,7 @@ class WilayahController extends Controller
 
                 $data = $kelurahan->map(function ($kel) use ($kriteriaWilayah, $nilaiKriteria) {
                     $row = [
-                        'DT_RowIndex' => $kel->id, // Pastikan ini sesuai dengan kebutuhan
+                        'DT_RowIndex' => $kel->id,
                         'kelurahan' => $kel->nama_kelurahan,
                         'kecamatan' => $kel->wilayahKecamatan->nama_kecamatan,
                     ];
@@ -77,19 +77,17 @@ class WilayahController extends Controller
         WilayahKecamatan::create($request->all());
     }
 
-    public function updateKecamatan(Request $request, $kecamatan)
+    public function updateKecamatan(Request $request, WilayahKecamatan $kecamatan)
     {
         $request->validate([
             'nama_kecamatan' => 'required|string|max:255',
         ]);
 
-        $kecamatan = WilayahKecamatan::findOrFail($kecamatan);
         $kecamatan->update($request->all());
     }
 
-    public function destroyKecamatan($kecamatan)
+    public function destroyKecamatan(WilayahKecamatan $kecamatan)
     {
-        $kecamatan = WilayahKecamatan::findOrFail($kecamatan);
         $kecamatan->delete();
     }
 
@@ -103,20 +101,18 @@ class WilayahController extends Controller
         WilayahKelurahan::create($request->all());
     }
 
-    public function updateKelurahan(Request $request, $kelurahan)
+    public function updateKelurahan(Request $request, WilayahKelurahan $kelurahan)
     {
         $request->validate([
             'nama_kelurahan' => 'required|string|max:255',
             'wilayah_kecamatan_id' => 'required|exists:wilayah_kecamatan,id',
         ]);
 
-        $kelurahan = WilayahKelurahan::findOrFail($kelurahan);
         $kelurahan->update($request->all());
     }
 
-    public function destroyKelurahan($kelurahan)
+    public function destroyKelurahan(WilayahKelurahan $kelurahan)
     {
-        $kelurahan = WilayahKelurahan::findOrFail($kelurahan);
         $kelurahan->delete();
     }
 

@@ -44,7 +44,7 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="#" aria-expanded="false">
+                    <a class="sidebar-link {{ request()->routeIs('sekolah.index') ? 'active' : '' }}" href="{{ route('sekolah.index') }}" aria-expanded="false">
                         <span>
                             <i class="ti ti-school"></i>
                         </span>

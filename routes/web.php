@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\KriteriaController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SekolahController;
 use App\Http\Controllers\WilayahController;
 use Illuminate\Support\Facades\Route;
 
@@ -37,6 +38,12 @@ Route::middleware('auth')->group(function () {
     Route::put('/wilayah-kelurahan/{kelurahan}', [WilayahController::class, 'updateKelurahan'])->name('wilayah.kelurahan.update');
     Route::delete('/wilayah-kelurahan/{kelurahan}', [WilayahController::class, 'destroyKelurahan'])->name('wilayah.kelurahan.destroy');
     Route::post('/nilai-kriteria-wilayah', [WilayahController::class, 'updateNilaiKriteria'])->name('wilayah.nilai-kriteria.update');
+
+    Route::get('/sekolah', [SekolahController::class, 'index'])->name('sekolah.index');
+    Route::get('/get-kelurahan/{wilayah_kecamatan_id}', [SekolahController::class, 'getKelurahan'])->name('sekolah.getKelurahan');
+    Route::post('/sekolah', [SekolahController::class, 'store'])->name('sekolah.store');
+    Route::put('/sekolah/{sekolah}', [SekolahController::class, 'update'])->name('sekolah.update');
+    Route::delete('/sekolah/{sekolah}', [SekolahController::class, 'destroy'])->name('sekolah.destroy');
 });
 
 require __DIR__.'/auth.php';

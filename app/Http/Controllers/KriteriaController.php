@@ -37,7 +37,7 @@ class KriteriaController extends Controller
         Kriteria::create($request->all());
     }
 
-    public function update(Request $request, $kriteria)
+    public function update(Request $request, Kriteria $kriteria)
     {
         $request->validate([
             'nama_kriteria' => 'required|string|max:255',
@@ -48,13 +48,11 @@ class KriteriaController extends Controller
             'bobot' => 'required|numeric|min:0|max:100'
         ]);
 
-        $kriteria = Kriteria::findOrFail($kriteria);
         $kriteria->update($request->all());
     }
 
-    public function destroy($kriteria)
+    public function destroy(Kriteria $kriteria)
     {
-        $kriteria = Kriteria::findOrFail($kriteria);
         $kriteria->delete();
     }
 }
