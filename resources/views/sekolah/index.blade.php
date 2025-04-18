@@ -51,6 +51,9 @@
                             <th>No</th>
                             <th>Nama Sekolah</th>
                             <th>Wilayah Sekolah</th>
+                            @foreach ($kriteriaSekolah as $kriteria)
+                                <th>{{ $kriteria->nama_kriteria }}</th>
+                            @endforeach
                             <th style="width: 30px;">Action</th>
                         </tr>
                     </thead>
@@ -163,8 +166,55 @@
                     ]
                 });
 
+                var tableNilaiKriteriaSekolah = $('#dataKriteriaSekolah').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    scrollX: true,
+                    ajax: {
+                        url: "{{ url()->current() }}",
+                        type: "GET",
+                        data: { type: 'kriteria_sekolah' }
+                    },
+                    columns:[
+                        {
+                            data: 'DT_RowIndex',
+                            name: 'DT_RowIndex',
+                        },
+                        {
+                            data: 'sekolah',
+                            name: 'sekolah',
+                        },
+                        {
+                            data: 'wilayah',
+                            name: 'wilayah',
+                        },
+                        @foreach ($kriteriaSekolah as $kriteria)
+                            {
+                                data: '{{ $kriteria->nama_kriteria }}',
+                                name: '{{ $kriteria->nama_kriteria }}',
+                            },
+                        @endforeach
+                        {
+                            data: 'action',
+                            name: 'action',
+                            orderable: false,
+                            searchable: false,
+                            render: function(data, type, row, meta) {
+                                return `
+                                    <div class="d-flex justify-content-center text-nowrap gap-2">
+                                        <button type="button" class="btn btn-sm btn-outline-info edit-btn" data-js="${row.id}">
+                                            <i class="ti ti-edit me-1"></i>
+                                            Update
+                                        </button>
+                                    </div>
+                                `;
+                            }
+                        }
+                    ]
+                });
+
                 function resetFormFields() {
-                    $('#sekolah').val('');
+                    $('#nama_sekolah').val('');
                     $('#wilayah_kecamatan').val('');
                     $('#wilayah_kelurahan').val('');
                     $('#wilayah_kelurahan').prop('disabled', true);
@@ -272,6 +322,7 @@
                     },
                     success: function(response) {
                         $('#dataSekolah').DataTable().ajax.reload();
+                        $('#dataKriteriaSekolah').DataTable().ajax.reload();
                         $('#sekolahModal').modal('hide');
                         console.log(response);
                     },

@@ -33,7 +33,7 @@ class WilayahController extends Controller
             }
             if ($request->get('type') == 'kriteria_wilayah') {
                 $kelurahan = WilayahKelurahan::with('wilayahKecamatan')->get();
-                $kriteriaWilayah = Kriteria::where('kategori', 'Wilayah')->get();
+                $kriteriaWilayah = Kriteria::where('kategori', 'wilayah')->get();
                 $nilaiKriteria = NilaiKriteriaWilayah::all();
 
                 $data = $kelurahan->map(function ($kel) use ($kriteriaWilayah, $nilaiKriteria) {

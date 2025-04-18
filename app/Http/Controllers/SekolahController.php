@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kriteria;
+use App\Models\NilaiKriteriaSekolah;
 use App\Models\Sekolah;
 use App\Models\WilayahKecamatan;
 use App\Models\WilayahKelurahan;
@@ -25,11 +27,41 @@ class SekolahController extends Controller
                     })
                     ->make(true);
             }
+            if ($request->get('type') == 'kriteria_sekolah') {
+                $sekolah = Sekolah::with(['wilayahKelurahan', 'wilayahKelurahan.wilayahKecamatan'])->get();
+                $kriteriaSekolah = Kriteria::where('kategori', 'sekolah')->get();
+                $nilaiKriteria = NilaiKriteriaSekolah::all();
+
+                $data = $sekolah->map(function ($sek) use ($kriteriaSekolah, $nilaiKriteria) {
+                    $wilayah = 'Kel. ' . $sek->wilayahKelurahan->nama_kelurahan . ', Kec. ' . $sek->wilayahKelurahan->wilayahKecamatan->nama_kecamatan;
+                    $row = [
+                        'DT_RowIndex' => $sek->id,
+                        'sekolah' => $sek->nama_sekolah,
+                        'wilayah' => $wilayah,
+                    ];
+
+                    foreach ($kriteriaSekolah as $kriteria) {
+                        $nilai = $nilaiKriteria->where('sekolah_id', $sek->id)
+                                    ->where('kriteria_id', $kriteria->id)
+                                    ->first();
+                        
+                        if ($kriteria->tipe == 'angka') {
+                            $row[$kriteria->nama_kriteria] = $nilai ? $nilai->nilai : '-';
+                        } else {
+                            $row[$kriteria->nama_kriteria] = $nilai ? $nilai->nilai_non_angka : '-';
+                        }
+                    }
+
+                    return $row;
+                });
+
+                return DataTables::of($data)->make(true);
+            }
         }
         return view('sekolah.index', [
             'title' => 'Data Sekolah',
-            'kelurahan' => WilayahKelurahan::all(),
             'kecamatan' => WilayahKecamatan::all(),
+            'kriteriaSekolah' => Kriteria::where('kategori', 'sekolah')->get(),
         ]);
     }
 
