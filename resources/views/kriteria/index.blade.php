@@ -212,7 +212,7 @@
                 });
     
                 $('#dataKriteria').on('click', '.edit-btn', function() {
-                    var id = $(this).data('id');
+                    var id = $(this).data('js');
                     var rowData = table.row($(this).parents('tr')).data();
     
                     $('#nama_kriteria').val(rowData.nama_kriteria);

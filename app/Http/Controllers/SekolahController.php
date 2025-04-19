@@ -8,6 +8,7 @@ use App\Models\Sekolah;
 use App\Models\WilayahKecamatan;
 use App\Models\WilayahKelurahan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Yajra\DataTables\DataTables;
 
 class SekolahController extends Controller
@@ -94,5 +95,48 @@ class SekolahController extends Controller
     public function destroy(Sekolah $sekolah)
     {
         $sekolah->delete();
+    }
+
+    public function updateNilaiKriteria(Request $request)
+    {
+        $namaSekolah = $request->input('nama_sekolah');
+        $sekolahId = Sekolah::where('nama_sekolah', $namaSekolah)->first()->id;
+
+        $konversiHurufKeAngka = [
+            'A' => 5,
+            'B' => 4,
+            'C' => 3,
+            'D' => 2,
+            'E' => 1,
+        ];
+
+        foreach ($request->all() as $key => $value) {
+            if (Str::startsWith($key, 'kriteria-')) {
+                $kriteriaId = (int) Str::after($key, 'kriteria-');
+
+                $kriteria = Kriteria::find($kriteriaId);
+
+                $nilai = null;
+                $nilaiNonAngka = null;
+
+                if ($kriteria && $kriteria->tipe === 'angka') {
+                    $nilai = $value !== null && $value !== '' ? $value : null;
+                } else {
+                    $nilaiNonAngka = $value !== null && $value !== '' ? $value : null;;
+                    $nilai = isset($konversiHurufKeAngka[$value]) ? $konversiHurufKeAngka[$value] : null;
+                }
+                
+                NilaiKriteriaSekolah::updateOrCreate(
+                    [
+                        'sekolah_id' => $sekolahId,
+                        'kriteria_id' => $kriteriaId,
+                    ],
+                    [
+                        'nilai' => $nilai,
+                        'nilai_non_angka' => $nilaiNonAngka,
+                    ]
+                );
+            }
+        }
     }
 }

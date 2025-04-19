@@ -44,6 +44,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/sekolah', [SekolahController::class, 'store'])->name('sekolah.store');
     Route::put('/sekolah/{sekolah}', [SekolahController::class, 'update'])->name('sekolah.update');
     Route::delete('/sekolah/{sekolah}', [SekolahController::class, 'destroy'])->name('sekolah.destroy');
+    Route::post('/nilai-kriteria-sekolah', [SekolahController::class, 'updateNilaiKriteria'])->name('sekolah.nilai-kriteria.update');
 });
 
 require __DIR__.'/auth.php';

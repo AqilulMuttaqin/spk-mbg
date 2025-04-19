@@ -184,13 +184,13 @@
                         </div><hr>
                         <p class="text-center fw-bold">Nilai Kriteria</p>
                         <input type="hidden" class="form-control form-control-user" name="nama_kelurahan">
-                        @foreach ($kriteriaWilayah as $kW)
+                        @foreach ($kriteriaWilayah as $kriteria)
                             <div class="form-group {{ !$loop->last ? 'mb-3' : '' }}">
-                                <label for="{{ $kW->id }}">{{ $kW->nama_kriteria }}</label>
-                                @if ($kW->tipe === 'angka')
-                                    <input type="number" step="any" class="form-control form-control-user" id="{{ $kW->id }}" name="kriteria-{{ $kW->id }}">
+                                <label for="{{ $kriteria->id }}">{{ $kriteria->nama_kriteria }}</label>
+                                @if ($kriteria->tipe === 'angka')
+                                    <input type="number" step="any" class="form-control form-control-user" id="{{ $kriteria->id }}" name="kriteria-{{ $kriteria->id }}">
                                 @else
-                                    <select class="form-control form-control-user" id="{{ $kW->id }}" name="kriteria-{{ $kW->id }}">
+                                    <select class="form-control form-control-user" id="{{ $kriteria->id }}" name="kriteria-{{ $kriteria->id }}">
                                         <option value="" disabled selected></option>
                                         <option value="A">A (Sangat Baik)</option>
                                         <option value="B">B (Baik)</option>

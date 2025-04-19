@@ -133,10 +133,8 @@ class WilayahController extends Controller
             if (Str::startsWith($key, 'kriteria-')) {
                 $kriteriaId = (int) Str::after($key, 'kriteria-');
 
-                // Ambil data kriteria untuk tahu tipenya
                 $kriteria = Kriteria::find($kriteriaId);
 
-                // Default value
                 $nilai = null;
                 $nilaiNonAngka = null;
 
