@@ -33,10 +33,10 @@ class SekolahController extends Controller
                 $kriteriaSekolah = Kriteria::where('kategori', 'sekolah')->get();
                 $nilaiKriteria = NilaiKriteriaSekolah::all();
 
-                $data = $sekolah->map(function ($sek) use ($kriteriaSekolah, $nilaiKriteria) {
+                $data = $sekolah->map(function ($sek, $index) use ($kriteriaSekolah, $nilaiKriteria) {
                     $wilayah = 'Kel. ' . $sek->wilayahKelurahan->nama_kelurahan . ', Kec. ' . $sek->wilayahKelurahan->wilayahKecamatan->nama_kecamatan;
                     $row = [
-                        'DT_RowIndex' => $sek->id,
+                        'DT_RowIndex' => $index + 1,
                         'sekolah' => $sek->nama_sekolah,
                         'wilayah' => $wilayah,
                     ];

@@ -36,9 +36,9 @@ class WilayahController extends Controller
                 $kriteriaWilayah = Kriteria::where('kategori', 'wilayah')->get();
                 $nilaiKriteria = NilaiKriteriaWilayah::all();
 
-                $data = $kelurahan->map(function ($kel) use ($kriteriaWilayah, $nilaiKriteria) {
+                $data = $kelurahan->map(function ($kel, $index) use ($kriteriaWilayah, $nilaiKriteria) {
                     $row = [
-                        'DT_RowIndex' => $kel->id,
+                        'DT_RowIndex' => $index + 1,
                         'kelurahan' => $kel->nama_kelurahan,
                         'kecamatan' => $kel->wilayahKecamatan->nama_kecamatan,
                     ];
