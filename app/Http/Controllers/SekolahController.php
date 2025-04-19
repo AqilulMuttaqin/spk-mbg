@@ -46,9 +46,9 @@ class SekolahController extends Controller
                                     ->first();
                         
                         if ($kriteria->tipe == 'angka') {
-                            $row[$kriteria->nama_kriteria] = $nilai ? $nilai->nilai : '-';
+                            $row[$kriteria->nama_kriteria] = ($nilai && $nilai->nilai !== null) ? $nilai->nilai : '-';
                         } else {
-                            $row[$kriteria->nama_kriteria] = $nilai ? $nilai->nilai_non_angka : '-';
+                            $row[$kriteria->nama_kriteria] = ($nilai && $nilai->nilai_non_angka !== null) ? $nilai->nilai_non_angka : '-';
                         }
                     }
 

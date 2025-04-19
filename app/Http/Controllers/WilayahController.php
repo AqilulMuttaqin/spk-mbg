@@ -49,9 +49,9 @@ class WilayahController extends Controller
                                     ->first();
                         
                         if ($kriteria->tipe == 'angka') {
-                            $row[$kriteria->nama_kriteria] = $nilai ? $nilai->nilai : '-';
+                            $row[$kriteria->nama_kriteria] = ($nilai && $nilai->nilai !== null) ? $nilai->nilai : '-';
                         } else {
-                            $row[$kriteria->nama_kriteria] = $nilai ? $nilai->nilai_non_angka : '-';
+                            $row[$kriteria->nama_kriteria] = ($nilai && $nilai->nilai_non_angka !== null) ? $nilai->nilai_non_angka : '-';
                         }
                     }
 
@@ -121,16 +121,40 @@ class WilayahController extends Controller
         $namaKelurahan = $request->input('nama_kelurahan');
         $wilayahKelurahanId = WilayahKelurahan::where('nama_kelurahan', $namaKelurahan)->first()->id;
 
+        $konversiHurufKeAngka = [
+            'A' => 5,
+            'B' => 4,
+            'C' => 3,
+            'D' => 2,
+            'E' => 1,
+        ];
+
         foreach ($request->all() as $key => $value) {
             if (Str::startsWith($key, 'kriteria-')) {
                 $kriteriaId = (int) Str::after($key, 'kriteria-');
+
+                // Ambil data kriteria untuk tahu tipenya
+                $kriteria = Kriteria::find($kriteriaId);
+
+                // Default value
+                $nilai = null;
+                $nilaiNonAngka = null;
+
+                if ($kriteria && $kriteria->tipe === 'angka') {
+                    $nilai = $value !== null && $value !== '' ? $value : null;
+                } else {
+                    $nilaiNonAngka = $value !== null && $value !== '' ? $value : null;;
+                    $nilai = isset($konversiHurufKeAngka[$value]) ? $konversiHurufKeAngka[$value] : null;
+                }
+
                 NilaiKriteriaWilayah::updateOrCreate(
                     [
                         'wilayah_kelurahan_id' => $wilayahKelurahanId,
                         'kriteria_id' => $kriteriaId,
                     ],
                     [
-                        'nilai' => $value !== null && $value !== '' ? $value : null,
+                        'nilai' => $nilai,
+                        'nilai_non_angka' => $nilaiNonAngka,
                     ]
                 );
             }
