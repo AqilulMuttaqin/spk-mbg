@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kriteria;
+use App\Models\NilaiKriteriaSekolah;
+use App\Models\NilaiKriteriaWilayah;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -53,6 +55,8 @@ class KriteriaController extends Controller
 
     public function destroy(Kriteria $kriteria)
     {
+        NilaiKriteriaWilayah::where('kriteria_id', $kriteria->id)->delete();
+        NilaiKriteriaSekolah::where('kriteria_id', $kriteria->id)->delete();
         $kriteria->delete();
     }
 }

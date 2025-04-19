@@ -56,7 +56,7 @@
                             <div class="col-sm-6">
                                 <div class="form-group mb-3">
                                     <label for="kategori">Kategori</label>
-                                    <select class="form-control form-control-user" id="kategori" name="kategori" required>>
+                                    <select class="form-control form-control-user" id="kategori" name="kategori" required>
                                         <option value="" disabled selected></option>
                                         <option value="wilayah">Wilayah</option>
                                         <option value="sekolah">Sekolah</option>
@@ -74,7 +74,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group mb-3">
+                        <div class="form-group mb-3" id="satuanWrapper">
                             <label for="satuan">Satuan</label>
                             <input type="text" class="form-control form-control-user" id="satuan" name="satuan" required>
                         </div>
@@ -218,6 +218,7 @@
                     $('#nama_kriteria').val(rowData.nama_kriteria);
                     $('#kategori').val(rowData.kategori);
                     $('#tipe').val(rowData.tipe);
+                    updateSatuanField(rowData.tipe);
                     $('#satuan').val(rowData.satuan);
                     $('#sifat').val(rowData.sifat);
                     $('#bobot').val(rowData.bobot);
@@ -271,6 +272,47 @@
                         console.log('error nich');
                     }
                 });
+            });
+
+            const satuanWrapper = $('#satuanWrapper');
+
+            function updateSatuanField(tipe) {
+                if (tipe === 'angka') {
+                    let options = `
+                        <label for="satuan">Satuan</label>
+                        <select class="form-control form-control-user" id="satuan" name="satuan" required>
+                            <option value="" disabled selected></option>
+                            <option value="%">Persen (%)</option>
+                            <option value="Orang">Orang</option>
+                            <option value="Rp">Rupiah (Rp)</option>
+                            <option value="Tahun">Tahun</option>
+                            <option value="Hari">Hari</option>
+                            <option value="Unit">Unit</option>
+                            <option value="Km">Kilometer (Km)</option>
+                            <option value="Liter">Liter</option>
+                            <option value="Skor">Skor</option>
+                            <option value="Jam">Jam</option>
+                        </select>
+                    `;
+                    satuanWrapper.html(options);
+                } else if (tipe === 'non-angka') {
+                    let input = `
+                        <label for="satuan">Satuan</label>
+                        <input type="text" class="form-control form-control-user" id="satuan" name="satuan" value="A-E" readonly>
+                    `;
+                    satuanWrapper.html(input);
+                } else {
+                    let input = `
+                        <label for="satuan">Satuan</label>
+                        <input type="text" class="form-control form-control-user" id="satuan" name="satuan" required>
+                    `;
+                    satuanWrapper.html(input);
+                }
+            }
+
+            $('#tipe').change(function() {
+                var selectedTipe = $(this).val();
+                updateSatuanField(selectedTipe);
             });
         </script>
     @endpush
