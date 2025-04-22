@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\KriteriaController;
+use App\Http\Controllers\PerhitunganRekomendasiController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SekolahController;
 use App\Http\Controllers\WilayahController;
@@ -45,6 +46,8 @@ Route::middleware('auth')->group(function () {
     Route::put('/sekolah/{sekolah}', [SekolahController::class, 'update'])->name('sekolah.update');
     Route::delete('/sekolah/{sekolah}', [SekolahController::class, 'destroy'])->name('sekolah.destroy');
     Route::post('/nilai-kriteria-sekolah', [SekolahController::class, 'updateNilaiKriteria'])->name('sekolah.nilai-kriteria.update');
+
+    Route::get('/rekomendasi', [PerhitunganRekomendasiController::class, 'index'])->name('rekomendasi.index');
 });
 
 require __DIR__.'/auth.php';

@@ -2,7 +2,7 @@
     <div>
         <div class="brand-logo d-flex align-items-center justify-content-center position-relative">
             <a href="#" class="text-nowrap mt-5 mb-2">
-                <img src="{{ asset('assets/images/Logo.png') }}" width="120" alt="" />
+                <img src="{{ asset('assets/images/logo-mbg.png') }}" width="120" alt="" />
             </a>
             <div class="close-btn position-absolute top-0 end-0 mt-2 me-2 d-xl-none d-block sidebartoggler cursor-pointer"
                 id="sidebarCollapse">
@@ -52,7 +52,7 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="#" aria-expanded="false">
+                    <a class="sidebar-link {{ request()->routeIs('rekomendasi.index') ? 'active' : '' }}" href="{{ route('rekomendasi.index') }}" aria-expanded="false">
                         <span>
                             <i class="ti ti-list-check"></i>
                         </span>

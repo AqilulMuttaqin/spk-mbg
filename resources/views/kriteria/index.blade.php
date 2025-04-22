@@ -4,21 +4,21 @@
     <div class="card">
         <div class="card-header">
             <div class="row">
-                <div class="col-sm-4">
-                    <h5>Data Kriteria</h5>
+                <div class="col-sm-4 d-flex align-items-center">
+                    <h5 class="mb-0">Data Kriteria</h5>
                 </div>
                 <div class="col-sm-8">
                     <div class="d-flex justify-content-end">
-                        <button type="button" class="btn btn-sm btn-primary me-2" id="tambahDataBtn">
+                        <button type="button" class="btn btn-sm btn-primary" id="tambahDataBtn">
                             Tambah Data
                         </button>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="card-body">
+        <div class="card-body p-3">
             <div class="table-responsive">
-                <table class="table table-striped w-100" id="dataKriteria">
+                <table class="table table-striped text-nowrap w-100" id="dataKriteria">
                     <thead>
                         <tr>
                             <th>No</th>

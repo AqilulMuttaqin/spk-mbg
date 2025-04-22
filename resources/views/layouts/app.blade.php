@@ -8,8 +8,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="shortcut icon" type="image/png" href="{{ asset('assets/images/logos/favicon.png') }}" />
     <link rel="stylesheet" href="{{ asset('assets/css/styles.min.css') }}" />
-    <script src="{{ asset('assets/js/jquery-3.6.4.min.js') }}"></script>
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/jquery.dataTables.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/dataTables.bootstrap5.css') }}">
 </head>
 
 <body>
@@ -30,13 +29,16 @@
             </div>
         </div>
     </div>
-    <script src="{{ asset('assets/js/jquery.dataTables.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery-3.7.1.js') }}"></script>
+    {{-- <script src="{{ asset('assets/js/jquery.dataTables.js') }}"></script> --}}
     <script src="{{ asset('assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('assets/js/sidebarmenu.js') }}"></script>
+    <script src="{{ asset('assets/js/dataTables.js') }}"></script>
+    <script src="{{ asset('assets/js/dataTables.bootstrap5.js') }}"></script>
+    {{-- <script src="{{ asset('assets/js/sidebarmenu.js') }}"></script>
     <script src="{{ asset('assets/js/app.min.js') }}"></script>
     <script src="{{ asset('assets/libs/apexcharts/dist/apexcharts.min.js') }}"></script>
     <script src="{{ asset('assets/libs/simplebar/dist/simplebar.js') }}"></script>
-    <script src="{{ asset('assets/js/dashboard.js') }}"></script>
+    <script src="{{ asset('assets/js/dashboard.js') }}"></script> --}}
     @stack('script')
 </body>
 
