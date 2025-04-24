@@ -84,6 +84,7 @@
             var formData = $(this).serialize();
             var url = $(this).attr('action');
             var method = $(this).attr('method');
+            var currentPage = $('#dataKriteria').DataTable().page();
 
             $.ajax({
                 url: url,
@@ -91,8 +92,9 @@
                 data: formData,
                 success: function(response) {
                     $('#dataKriteria').DataTable().ajax.reload();
+                    $('#dataKriteria').DataTable().page(currentPage).draw('page');
                     $('#kriteriaModal').modal('hide');
-                    console.log(response);
+                    console.log(response.message);
                 },
                 error: function(xhr) {
                     console.log(xhr.responseJSON.message);

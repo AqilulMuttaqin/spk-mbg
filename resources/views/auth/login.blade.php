@@ -19,7 +19,7 @@
                         <div class="card mb-0">
                             <div class="card-body">
                                 <a href="/login" class="text-nowrap logo-img text-center d-block py-3 w-100">
-                                    <img src="{{ asset('assets/images/Logo.png') }}" width="80" alt="">
+                                    <img src="{{ asset('assets/images/logo-mbg.png') }}" width="80" alt="">
                                 </a>
                                 <p class="text-center">Sistem Rekomendasi SDN Penerima Program Makan Bergizi Gratis (MBG)</p>
                                 <form method="POST" action="{{ route('login') }}">
