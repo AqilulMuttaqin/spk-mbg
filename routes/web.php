@@ -43,6 +43,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/sekolah', [SekolahController::class, 'index'])->name('sekolah.index');
     Route::get('/get-kelurahan/{wilayah_kecamatan_id}', [SekolahController::class, 'getKelurahan'])->name('sekolah.getKelurahan');
     Route::post('/sekolah', [SekolahController::class, 'store'])->name('sekolah.store');
+    Route::get('/sekolah/{sekolah}', [SekolahController::class, 'show'])->name('sekolah.show');
     Route::put('/sekolah/{sekolah}', [SekolahController::class, 'update'])->name('sekolah.update');
     Route::delete('/sekolah/{sekolah}', [SekolahController::class, 'destroy'])->name('sekolah.destroy');
     Route::post('/nilai-kriteria-sekolah', [SekolahController::class, 'updateNilaiKriteria'])->name('sekolah.nilai-kriteria.update');

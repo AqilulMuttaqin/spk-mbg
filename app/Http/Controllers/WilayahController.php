@@ -56,7 +56,6 @@ class WilayahController extends Controller
                 $data = $kelurahan->map(function ($kel, $index) use ($kriteriaWilayah, $nilaiKriteria) {
                     $row = [
                         'id' => $kel->id,
-                        'index' => $index + 1,
                         'kelurahan' => $kel->nama_kelurahan,
                         'kecamatan' => $kel->wilayahKecamatan->nama_kecamatan,
                     ];
