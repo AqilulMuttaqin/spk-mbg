@@ -49,6 +49,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/nilai-kriteria-sekolah', [SekolahController::class, 'updateNilaiKriteria'])->name('sekolah.nilai-kriteria.update');
 
     Route::get('/rekomendasi', [PerhitunganRekomendasiController::class, 'index'])->name('rekomendasi.index');
+    Route::get('/lihat-hasil-perhitungan', [PerhitunganRekomendasiController::class, 'perhitungan'])->name('rekomendasi.lihat-hasil-perhitungan');
 });
 
 require __DIR__.'/auth.php';

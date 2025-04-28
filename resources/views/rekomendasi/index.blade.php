@@ -9,9 +9,9 @@
                 </div>
                 <div class="col-sm-6">
                     <div class="d-flex justify-content-end">
-                        <button type="button" class="btn btn-sm btn-primary me-2" id="tambahDataSekolah">
-                            Tambah Data
-                        </button>
+                        <a href="{{ route('rekomendasi.lihat-hasil-perhitungan') }}" class="btn btn-sm btn-primary me-2">
+                            Lihat Hasil Rekomendasi
+                        </a>
                     </div>
                 </div>
             </div>
@@ -21,7 +21,7 @@
                 <table class="table table-striped text-nowrap w-100" id="dataNilaiLengkap">
                     <thead>
                         <tr>
-                            <th>No</th>
+                            <th>Alternatif</th>
                             <th>Nama Sekolah</th>
                             <th>Wilayah</th>
                             @foreach ($kriteria as $k)
@@ -55,23 +55,11 @@
                         type: "GET",
                     },
                     columns: [
-                        {
-                            data: 'DT_RowIndex', 
-                            name: 'DT_RowIndex'
-                        },
-                        {
-                            data: 'sekolah', 
-                            name: 'sekolah'
-                        },
-                        {
-                            data: 'wilayah', 
-                            name: 'wilayah' 
-                        },
+                        { data: 'alternatif', name: 'alternatif' },
+                        { data: 'sekolah', name: 'sekolah' },
+                        { data: 'wilayah', name: 'wilayah' },
                         @foreach ($kriteria as $k)
-                            { 
-                                data: '{{ $k->nama_kriteria }}', 
-                                name: '{{ $k->nama_kriteria }}' 
-                            },
+                            { data: '{{ $k->nama_kriteria }}', name: '{{ $k->nama_kriteria }}' },
                         @endforeach
                     ]
                 });

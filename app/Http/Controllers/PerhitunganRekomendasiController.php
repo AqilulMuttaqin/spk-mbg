@@ -14,7 +14,6 @@ class PerhitunganRekomendasiController extends Controller
     public function index(Request $request)
     {
         if($request->ajax()) {
-            
             $sekolah = Sekolah::with(['wilayahKelurahan', 'wilayahKelurahan.wilayahKecamatan'])->get();
             $kriteria = Kriteria::all();
             $nilaiKriteriaSekolah = NilaiKriteriaSekolah::all();
@@ -23,7 +22,7 @@ class PerhitunganRekomendasiController extends Controller
             $data = $sekolah->map(function ($sek, $index) use ($kriteria, $nilaiKriteriaSekolah, $nilaiKriteriaWilayah) {
                 $wilayah = 'Kel. ' . $sek->wilayahKelurahan->nama_kelurahan . ', Kec. ' . $sek->wilayahKelurahan->wilayahKecamatan->nama_kecamatan;
                 $row = [
-                    'DT_RowIndex' => $index + 1,
+                    'alternatif' => 'A ' . $index + 1,
                     'sekolah' => $sek->nama_sekolah,
                     'wilayah' => $wilayah,
                 ];
@@ -52,6 +51,14 @@ class PerhitunganRekomendasiController extends Controller
             return DataTables::of($data)->make(true);
         }
 
+        return view('rekomendasi.index', [
+            'title' => 'Rekomendasi',
+            'kriteria' => Kriteria::all(),
+        ]);
+    }
+
+    public function perhitungan()
+    {
         $sekolah = Sekolah::with(['wilayahKelurahan', 'wilayahKelurahan.wilayahKecamatan'])->get();
         $kriteria = Kriteria::all();
         $nilaiKriteriaSekolah = NilaiKriteriaSekolah::all();
@@ -183,11 +190,15 @@ class PerhitunganRekomendasiController extends Controller
                 $discordanceValue["d" . ($i + 1) . "-" . ($j + 1)] = $nilaiDij;
             }
         }
-        dd($concordanceValue);
 
-        return view('rekomendasi.index', [
-            'title' => 'Rekomendasi',
-            'kriteria' => Kriteria::all(),
+        return view('rekomendasi.hasil', [
+            'data' => $data,
+            'normalisasi' => $normalisasi,
+            'bobotTernormalisasi' => $bobotTernormalisasi,
+            'concordanceSet' => $concordanceSet,
+            'concordanceValue' => $concordanceValue,
+            'discordanceSet' => $discordanceSet,
+            'discordanceValue' => $discordanceValue,
         ]);
     }
 }
