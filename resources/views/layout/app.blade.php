@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link rel="shortcut icon" href="{{ asset('src/img/icon.png') }}" />
     
-    <title>Makan Bergizi Gratis - Kota Malang</title>
+    <title>MBG Kota Malang | {{ $title }}</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <link href="{{ asset('src/css/bootstrap.min.css') }}" rel="stylesheet">

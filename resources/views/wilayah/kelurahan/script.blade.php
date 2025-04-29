@@ -2,7 +2,7 @@
     <script>
         $(document).ready(function() {
             var tableKelurahan = $('#dataKelurahan').DataTable({
-                processing: true,
+                processing: false,
                 serverSide: true,
                 scrollX: true,
                 pageLength: 5,

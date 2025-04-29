@@ -2,7 +2,7 @@
     <script>
         $(document).ready(function() {
             var tableNilaiKriteriaSekolah = $('#dataKriteriaSekolah').DataTable({
-                processing: true,
+                processing: false,
                 serverSide: true,
                 scrollX: true,
                 ajax: {

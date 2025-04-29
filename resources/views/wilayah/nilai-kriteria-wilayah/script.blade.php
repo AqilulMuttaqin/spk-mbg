@@ -2,7 +2,7 @@
     <script>
         $(document).ready(function() {
             var tableNilaiKriteiaWilayah = $('#dataKriteriaWilayah').DataTable({
-                processing: true,
+                processing: false,
                 serverSide: true,
                 scrollX: true,
                 ajax: {
