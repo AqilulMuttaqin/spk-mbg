@@ -51,18 +51,40 @@
                 var deleteUrl = form.attr('action');
                 var currentPage = tableKecamatan.page();
 
-                $.ajax({
-                    url: deleteUrl,
-                    type: 'DELETE',
-                    success: function(response) {
-                        tableKecamatan.ajax.reload();
-                        tableKecamatan.page(currentPage).draw('page');
-                        console.log(response.message);
-                    },
-                    error: function(xhr) {
-                        console.log(xhr.responseJSON.message);
+                Swal.fire({
+                    title: 'Apakah Anda yakin?',
+                    text: 'Data yang dihapus tidak bisa dikembalikan!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: deleteUrl,
+                            type: 'DELETE',
+                            success: function(response) {
+                                tableKecamatan.ajax.reload();
+                                tableKecamatan.page(currentPage).draw('page');
+                                Swal.fire({
+                                    title: 'Success',
+                                    text: response.message,
+                                    icon: 'success',
+                                });
+                            },
+                            error: function(xhr) {
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: xhr.responseJSON.message,
+                                    icon: 'error',
+                                });
+                            }
+                        })
                     }
-                })
+                });
+
             });
         });
 
@@ -83,10 +105,18 @@
                     $('#dataKelurahan').DataTable().ajax.reload();
                     $('#dataKriteriaWilayah').DataTable().ajax.reload();
                     $('#wilayahKecamatanModal').modal('hide');
-                    console.log(response.message);
+                    Swal.fire({
+                        title: 'Success',
+                        text: response.message,
+                        icon: 'success',
+                    });
                 },
                 error: function(xhr) {
-                    console.log(xhr.responseJSON.message);
+                    Swal.fire({
+                        title: 'Error',
+                        text: xhr.responseJSON.message,
+                        icon: 'error',
+                    });
                 }
             });
         });

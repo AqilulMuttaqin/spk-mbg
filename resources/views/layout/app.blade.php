@@ -38,6 +38,7 @@
     <script src="{{ asset('src/js/jquery-3.7.1.js') }}"></script>
     <script src="{{ asset('src/js/dataTables.js') }}"></script>
     <script src="{{ asset('src/js/dataTables.bootstrap5.js') }}"></script>
+    <script src="{{ asset('src/js/sweetalert2@11.js') }}"></script>
     <script>
         // GLOBAL SETUP TOKEN
         $.ajaxSetup({

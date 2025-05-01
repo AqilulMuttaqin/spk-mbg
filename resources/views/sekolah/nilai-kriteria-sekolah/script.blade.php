@@ -55,10 +55,18 @@
                     $('#dataKriteriaSekolah').DataTable().ajax.reload();
                     $('#dataKriteriaSekolah').DataTable().page(currentPage).draw('page');
                     $('#nilaiKriteriaSekolahModal').modal('hide');
-                    console.log(response.message);
+                    Swal.fire({
+                        title: 'Success',
+                        text: response.message,
+                        icon: 'success',
+                    });
                 },
                 error: function(xhr) {
-                    console.log(xhr.responseJSON.message);
+                    Swal.fire({
+                        title: 'Error',
+                        text: xhr.responseJSON.message,
+                        icon: 'error',
+                    });
                 }
             });
         });
