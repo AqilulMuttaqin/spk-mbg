@@ -17,9 +17,9 @@
                                 <button class="nav-link text-start" id="v-pills-discordance-index-tab" data-bs-toggle="pill" data-bs-target="#v-pills-discordance-index" type="button" role="tab" aria-controls="v-pills-discordance-index" aria-selected="false">Discordance Index</button>
                                 <button class="nav-link text-start" id="v-pills-concordance-matriks-tab" data-bs-toggle="pill" data-bs-target="#v-pills-concordance-matriks" type="button" role="tab" aria-controls="v-pills-concordance-matriks" aria-selected="false">Matriks Concordance</button>
                                 <button class="nav-link text-start" id="v-pills-discordance-matriks-tab" data-bs-toggle="pill" data-bs-target="#v-pills-discordance-matriks" type="button" role="tab" aria-controls="v-pills-discordance-matriks" aria-selected="false">Matriks Discordance</button>
-                                <button class="nav-link text-start" aria-selected="false">Dominan Concordance</button>
-                                <button class="nav-link text-start" aria-selected="false">Dominan Discordance</button>
-                                <button class="nav-link text-start" aria-selected="false">Matriks Agregat</button>
+                                <button class="nav-link text-start" id="v-pills-dominan-concordance-tab" data-bs-toggle="pill" data-bs-target="#v-pills-dominan-concordance" type="button" role="tab" aria-controls="v-pills-dominan-concordance" aria-selected="false">Dominan Concordance</button>
+                                <button class="nav-link text-start" id="v-pills-dominan-discordance-tab" data-bs-toggle="pill" data-bs-target="#v-pills-dominan-discordance" type="button" role="tab" aria-controls="v-pills-dominan-discordance" aria-selected="false">Dominan Discordance</button>
+                                <button class="nav-link text-start" id="v-pills-matriks-agregat-tab" data-bs-toggle="pill" data-bs-target="#v-pills-matriks-agregat" type="button" role="tab" aria-controls="v-pills-matriks-agregat" aria-selected="false">Matriks Agregat</button>
                                 <button class="nav-link text-start" aria-selected="false">Perangkingan</button>
                             </div>
                         </div>
@@ -173,6 +173,122 @@
                                                                 <td>-</td>
                                                             @else
                                                                 <td>{{ $discordanceValue['d' . $i . '-' . $j] ?? '-' }}</td>
+                                                            @endif
+                                                        @endfor
+                                                    </tr>
+                                                @endfor
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="v-pills-dominan-concordance" role="tabpanel" aria-labelledby="v-pills-dominan-concordance-tab" tabindex="0">
+                                    <div class="row ms-2">
+                                        <div class="col-3">
+                                            <p class="card-title">Jumlah total concordance</p>
+                                        </div>
+                                        <div class="col-9">
+                                            <p>: {{ $totalConcordanceValue }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="row ms-2">
+                                        <div class="col-3">
+                                            <p class="card-title">c Threshold</p>
+                                        </div>
+                                        <div class="col-9">
+                                            <p>: {{ $cThreshold }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped text-nowrap w-100" id="dominanConcordance">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    @for ($j = 1; $j <= $jumlahData; $j++)
+                                                        <th>A{{ $j }}</th>
+                                                    @endfor
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @for ($i = 1; $i <= $jumlahData; $i++)
+                                                    <tr>
+                                                        <th>A{{ $i }}</th>
+                                                        @for ($j = 1; $j <= $jumlahData; $j++)
+                                                            @if ($i == $j)
+                                                                <td>-</td>
+                                                            @else
+                                                                <td>{{ $concordanceDominanValue['c' . $i . '-' . $j] ?? '-' }}</td>
+                                                            @endif
+                                                        @endfor
+                                                    </tr>
+                                                @endfor
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="v-pills-dominan-discordance" role="tabpanel" aria-labelledby="v-pills-dominan-discordance-tab" tabindex="0">
+                                    <div class="row ms-2">
+                                        <div class="col-3">
+                                            <p class="card-title">Jumlah total discordance</p>
+                                        </div>
+                                        <div class="col-9">
+                                            <p>: {{ $totalDiscordanceValue }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="row ms-2">
+                                        <div class="col-3">
+                                            <p class="card-title">d Threshold</p>
+                                        </div>
+                                        <div class="col-9">
+                                            <p>: {{ $dThreshold }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped text-nowrap w-100" id="dominanDiscordance">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    @for ($j = 1; $j <= $jumlahData; $j++)
+                                                        <th>A{{ $j }}</th>
+                                                    @endfor
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @for ($i = 1; $i <= $jumlahData; $i++)
+                                                    <tr>
+                                                        <th>A{{ $i }}</th>
+                                                        @for ($j = 1; $j <= $jumlahData; $j++)
+                                                            @if ($i == $j)
+                                                                <td>-</td>
+                                                            @else
+                                                                <td>{{ $discordanceDominanValue['d' . $i . '-' . $j] ?? '-' }}</td>
+                                                            @endif
+                                                        @endfor
+                                                    </tr>
+                                                @endfor
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="v-pills-matriks-agregat" role="tabpanel" aria-labelledby="v-pills-matriks-agregat-tab" tabindex="0">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped text-nowrap w-100" id="matriksAgregat">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    @for ($j = 1; $j <= $jumlahData; $j++)
+                                                        <th>A{{ $j }}</th>
+                                                    @endfor
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @for ($i = 1; $i <= $jumlahData; $i++)
+                                                    <tr>
+                                                        <th>A{{ $i }}</th>
+                                                        @for ($j = 1; $j <= $jumlahData; $j++)
+                                                            @if ($i == $j)
+                                                                <td>-</td>
+                                                            @else
+                                                                <td>{{ $agregatDominanValue[$i . '-' . $j] ?? '-' }}</td>
                                                             @endif
                                                         @endfor
                                                     </tr>

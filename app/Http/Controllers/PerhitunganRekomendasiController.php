@@ -178,6 +178,30 @@ class PerhitunganRekomendasiController extends Controller
             ];
         }
 
+        $totalConcordanceValue = array_sum($concordanceValue);
+        $cThreshold = round($totalConcordanceValue / ($jumlahAlternatif * ($jumlahAlternatif - 1)), 3);
+        
+        $concordanceDominanValue = [];
+        foreach ($concordanceValue as $pasangan => $nilai) {
+            $concordanceDominanValue[$pasangan] = $nilai >= $cThreshold ? 1 : 0;
+        }
+        
+        $totalDiscordanceValue = array_sum($discordanceValue);
+        $dThreshold = round($totalDiscordanceValue / ($jumlahAlternatif * ($jumlahAlternatif - 1)), 3);
+
+        $discordanceDominanValue = [];
+        foreach ($discordanceValue as $pasangan => $nilai) {
+            $discordanceDominanValue[$pasangan] = $nilai <= $dThreshold ? 1 : 0;
+        }
+
+        $agregatDominanValue = [];
+        foreach ($concordanceDominanValue as $cKey => $cValue) {
+            $pasangan = substr($cKey, 1); 
+            $dKey = 'd' . $pasangan;
+            $dValue = $discordanceDominanValue[$dKey] ?? 0;
+            $agregatDominanValue[$pasangan] = $cValue * $dValue;
+        }
+
         // for ($i = 0; $i < $jumlahAlternatif; $i++) {
         //     for ($j = 0; $j < $jumlahAlternatif; $j++) {
         //         if ($i === $j) continue;
@@ -256,6 +280,13 @@ class PerhitunganRekomendasiController extends Controller
             'jumlahData' => count($sekolah),
             'concordanceValue' => $concordanceValue,
             'discordanceValue' => $discordanceValue,
+            'totalConcordanceValue' => $totalConcordanceValue,
+            'totalDiscordanceValue' => $totalDiscordanceValue,
+            'cThreshold' => $cThreshold,
+            'dThreshold' => $dThreshold,
+            'concordanceDominanValue' => $concordanceDominanValue,
+            'discordanceDominanValue' => $discordanceDominanValue,
+            'agregatDominanValue' => $agregatDominanValue,
         ]);
     }
 
