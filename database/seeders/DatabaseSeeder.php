@@ -15,16 +15,26 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('users')->insert([
-            [
-                'name' => 'Admin User',
-                'username' => 'admin',
-                'email' => 'admin@example.com',
-                'email_verified_at' => now(),
-                'password' => Hash::make('password123'),
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
+        // DB::table('users')->insert([
+        //     [
+        //         'name' => 'Admin User',
+        //         'username' => 'admin',
+        //         'email' => 'admin@example.com',
+        //         'email_verified_at' => now(),
+        //         'password' => Hash::make('password123'),
+        //         'created_at' => now(),
+        //         'updated_at' => now(),
+        //     ]
+        // ]);
+
+        $this->call([
+            UsersSeeder::class,
+            KriteriaSeeder::class,
+            WilayahKecamatanSeeder::class,
+            WilayahKelurahanSeeder::class,
+            SekolahSeeder::class,
+            NilaiKriteriaWilayahSeeder::class,
+            NilaiKriteriaSekolahSeeder::class,
         ]);
     }
 }
