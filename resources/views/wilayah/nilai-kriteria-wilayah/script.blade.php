@@ -28,6 +28,7 @@
                 $('#kecamatan').text(': ' + rowData.kecamatan);
                 $('#kelurahan').text(': ' + rowData.kelurahan);
                 $('input[name="nama_kelurahan"]').val(rowData.kelurahan);
+                $('input[name="nama_kecamatan"]').val(rowData.kecamatan);
                 @foreach ($kriteriaWilayah as $kriteria)
                     $('#{{ $kriteria->id }}').val(rowData['{{ $kriteria->nama_kriteria }}']);
                 @endforeach
@@ -59,6 +60,47 @@
                         title: 'Success',
                         text: response.message,
                         icon: 'success',
+                    });
+                },
+                error: function(xhr) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: xhr.responseJSON.message,
+                        icon: 'error',
+                    });
+                }
+            });
+        });
+
+        $('#importNilaiKriteriaWilayah').on('click', function() {
+            $('#file').val('');
+            $('#importForm').attr('action', "{{ route('wilayah.nilai-kriteria.import') }}");
+            $('#importForm').attr('method', 'POST');
+            $('#importModal').modal('show');
+        });
+
+        $('#importForm').on('submit', function(e) {
+            e.preventDefault();
+            console.log('test');
+            var formData = new FormData(this);
+            var url = $(this).attr('action');
+            var method = $(this).attr('method');
+            var currentPage = $('#dataKriteriaWilayah').DataTable().page();
+
+            $.ajax({
+                url: url,
+                type: method,
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    $('#dataKriteriaWilayah').DataTable().ajax.reload();
+                    $('#dataKriteriaWilayah').DataTable().page(currentPage).draw('page');
+                    $('#importModal').modal('hide');
+                    Swal.fire({
+                        title: 'Success',
+                        text: response.message,
+                        icon: response.status,
                     });
                 },
                 error: function(xhr) {

@@ -83,6 +83,23 @@
                         <div class="col-sm-6">
                             <h5 class="card-title mb-0">Data Nilai Kriteria Wilayah</h5>
                         </div>
+                        <div class="col-sm-6">
+                            <div class="d-flex justify-content-end">
+                                <button type="button" class="btn btn-sm btn-success dropdown-toggle" data-bs-toggle="dropdown">
+                                    Import Excel
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" id="importNilaiKriteriaWilayah">
+                                        <i class="icon-sm me-1" data-feather="upload"></i>
+                                        Import Excel
+                                    </a>
+                                    <a class="dropdown-item" href="{{ route('wilayah.nilai-kriteria.export-format-import') }}">
+                                        <i class="icon-sm me-1" data-feather="download"></i>
+                                        Format Import
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="card-body p-2">
@@ -112,6 +129,7 @@
     @include('wilayah.kecamatan.form-modal')
     @include('wilayah.kelurahan.form-modal')
     @include('wilayah.nilai-kriteria-wilayah.form-modal')
+    @include('wilayah.nilai-kriteria-wilayah.import-modal')
 
     @include('wilayah.kecamatan.script')
     @include('wilayah.kelurahan.script')

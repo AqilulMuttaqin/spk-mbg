@@ -25,6 +25,7 @@
                     </div><hr>
                     <p class="text-center fw-bold">Nilai Kriteria</p>
                     <input type="hidden" class="form-control form-control-user" name="nama_kelurahan">
+                    <input type="hidden" class="form-control form-control-user" name="nama_kecamatan">
                     @foreach ($kriteriaWilayah as $kriteria)
                         <div class="form-group {{ !$loop->last ? 'mb-3' : '' }}">
                             <label for="{{ $kriteria->id }}">{{ $kriteria->nama_kriteria }}</label>

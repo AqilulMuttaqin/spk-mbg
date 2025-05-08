@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\FormatNilaiKriteriaWilayahExport;
+use App\Imports\NilaiKriteriaWilayahImport;
 use App\Models\Kriteria;
 use App\Models\NilaiKriteriaWilayah;
 use App\Models\WilayahKecamatan;
@@ -10,6 +12,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\DataTables;
 
 class WilayahController extends Controller
@@ -260,7 +263,11 @@ class WilayahController extends Controller
     {
         try {
             $namaKelurahan = $request->input('nama_kelurahan');
-            $wilayahKelurahanId = WilayahKelurahan::where('nama_kelurahan', $namaKelurahan)->first()->id;
+            $namaKecamatan = $request->input('nama_kecamatan');
+            $kecamatanId = WilayahKecamatan::where('nama_kecamatan', $namaKecamatan)->first()->id;
+            $wilayahKelurahanId = WilayahKelurahan::where('nama_kelurahan', $namaKelurahan)
+                ->where('wilayah_kecamatan_id', $kecamatanId)
+                ->first()->id;
     
             $konversiHurufKeAngka = [
                 'A' => 5,
@@ -308,5 +315,81 @@ class WilayahController extends Controller
                 'message' => 'Data gagal diperbarui.'
             ], 500);
         }
+    }
+
+    public function importNilaiKriteria(Request $request)
+    {
+        try {
+            $file = $request->file('file');
+            $extension = $file->getClientOriginalExtension();
+
+            if ($extension !== 'xlsx' && $extension !== 'xls') {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'File harus berupa file Excel (xlsx/xls).'
+                ], 422);
+            }
+
+            $importer = new NilaiKriteriaWilayahImport();
+            $importResult = $importer->import(request()->file('file'));
+            
+            $successCount = $importResult['imported_count'];
+            $skippedRows = $importResult['skipped_rows'];
+
+            $wilayahErrors = array_filter($skippedRows, fn($item) => ($item['type'] ?? '') === 'wilayah');
+            $nilaiErrors = array_filter($skippedRows, fn($item) => ($item['type'] ?? '') === 'nilai');
+            
+            $failedWilayahCount = count($wilayahErrors);
+            $failedNilaiCount = count($nilaiErrors);
+            
+            $message = "$successCount data berhasil diimpor, $failedWilayahCount data gagal, $failedNilaiCount nilai salah.";
+            
+            $detailMessages = [];
+            
+            if ($failedWilayahCount > 0) {
+                $wilayahDetails = array_map(function($error) {
+                    return "- baris {$error['row']} ({$error['reason']})";
+                }, $wilayahErrors);
+                
+                $detailMessages[] = "Data salah:\n" . implode("\n", $wilayahDetails);
+            }
+            
+            if ($failedNilaiCount > 0) {
+                $nilaiGrouped = [];
+                foreach ($nilaiErrors as $error) {
+                    $nilaiGrouped[$error['row']][] = $error['kriteria'];
+                }
+                
+                $nilaiDetails = array_map(function($row, $kriterias) {
+                    return "- baris $row (kriteria: " . implode(', ', $kriterias) . ")";
+                }, array_keys($nilaiGrouped), $nilaiGrouped);
+                
+                $detailMessages[] = "Nilai salah:\n" . implode("\n", $nilaiDetails);
+            }
+            
+            $message .= "\n\n" . implode("\n\n", $detailMessages);
+            
+            if (empty($skippedRows)) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => $message
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'warning',
+                    'message' => $message,
+                ]);
+            }
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Data gagal diimpor.'
+            ], 500);
+        }
+    }
+
+    public function formatImport()
+    {
+        return Excel::download(new FormatNilaiKriteriaWilayahExport(), 'Format Import Nilai Kriteria Wilayah.xlsx');
     }
 }

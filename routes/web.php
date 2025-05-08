@@ -45,6 +45,8 @@ Route::middleware('auth')->group(function () {
         Route::delete('/kelurahan/{kelurahan}', 'destroyKelurahan')->name('kelurahan.destroy');
     
         Route::post('/nilai-kriteria', 'updateNilaiKriteria')->name('nilai-kriteria.update');
+        Route::post('/nilai-kriteria-import', 'importNilaiKriteria')->name('nilai-kriteria.import');
+        Route::get('/export-format-import', 'formatImport')->name('nilai-kriteria.export-format-import');
     });
     
     Route::controller(SekolahController::class)->prefix('sekolah')->name('sekolah.')->group(function () {
@@ -55,7 +57,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{sekolah}', 'destroy')->name('destroy');
     
         Route::get('/get-kelurahan/{wilayah_kecamatan_id}', 'getKelurahan')->name('getKelurahan');
-        Route::post('/nilai-kriteria', 'updateNilaiKriteria')->name('nilai-kriteria.update');
+        Route::post('/nilai-kriteria-', 'updateNilaiKriteria')->name('nilai-kriteria.update');
     });
 
     // Route::get('/kriteria', [KriteriaController::class, 'index'])->name('kriteria.index');
