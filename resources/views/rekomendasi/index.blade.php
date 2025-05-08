@@ -20,7 +20,7 @@
                                 <button class="nav-link text-start" id="v-pills-dominan-concordance-tab" data-bs-toggle="pill" data-bs-target="#v-pills-dominan-concordance" type="button" role="tab" aria-controls="v-pills-dominan-concordance" aria-selected="false">Dominan Concordance</button>
                                 <button class="nav-link text-start" id="v-pills-dominan-discordance-tab" data-bs-toggle="pill" data-bs-target="#v-pills-dominan-discordance" type="button" role="tab" aria-controls="v-pills-dominan-discordance" aria-selected="false">Dominan Discordance</button>
                                 <button class="nav-link text-start" id="v-pills-matriks-agregat-tab" data-bs-toggle="pill" data-bs-target="#v-pills-matriks-agregat" type="button" role="tab" aria-controls="v-pills-matriks-agregat" aria-selected="false">Matriks Agregat</button>
-                                <button class="nav-link text-start" aria-selected="false">Perangkingan</button>
+                                <button class="nav-link text-start" id="v-pills-ranking-tab" data-bs-toggle="pill" data-bs-target="#v-pills-ranking" type="button" role="tab" aria-controls="v-pills-ranking" aria-selected="false">Perangkingan</button>
                             </div>
                         </div>
                         <div class="col-7 col-md-9 ps-0">
@@ -297,6 +297,23 @@
                                         </table>
                                     </div>
                                 </div>
+                                <div class="tab-pane fade" id="v-pills-ranking" role="tabpanel" aria-labelledby="v-pills-ranking-tab" tabindex="0">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped text-nowrap w-100" id="perangkingan">
+                                            <thead>
+                                                <tr>
+                                                    <th>Alternatif</th>
+                                                    <th>Nama Sekolah</th>
+                                                    <th>Total Agregat</th>
+                                                    <th>Ranking</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -461,6 +478,25 @@
                     columns: [
                         { data: 'pasangan', name: 'pasangan', orderable: false },
                         { data: 'nilai', name: 'nilai', orderable: false }
+                    ]
+                });
+
+                var tablePerangkingan = $('#perangkingan').DataTable({
+                    processing: false,
+                    serverSide: true,
+                    scrollX: true,
+                    deferRender: true,
+                    scroller: true,
+                    ajax: {
+                        url: "{{ url()->current() }}",
+                        type: "GET",
+                        data: { type: 'hasilRanking' }
+                    },
+                    columns: [
+                        { data: 'alternatif', name: 'alternatif', orderable: false },
+                        { data: 'sekolah', name: 'sekolah', orderable: false },
+                        { data: 'total_agregat', name: 'total_agregat', orderable: false },
+                        { data: 'ranking', name: 'ranking' }
                     ]
                 });
             });
