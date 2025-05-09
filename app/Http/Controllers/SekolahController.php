@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\FormatNilaiKriteriaSekolahExport;
+use App\Imports\NilaiKriteriaSekolahImport;
 use App\Models\Kriteria;
 use App\Models\NilaiKriteriaSekolah;
 use App\Models\Sekolah;
@@ -234,6 +235,77 @@ class SekolahController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Data nilai gagal diperbarui.'
+            ], 500);
+        }
+    }
+
+    public function importNilaiKriteria(Request $request)
+    {
+        try {
+            $file = $request->file('file');
+            $extension = $file->getClientOriginalExtension();
+
+            if ($extension !== 'xlsx' && $extension !== 'xls') {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'File harus berupa file Excel (xlsx/xls).'
+                ], 422);
+            }
+
+            $importer = new NilaiKriteriaSekolahImport();
+            $importResult = $importer->import(request()->file('file'));
+            
+            $successCount = $importResult['imported_count'];
+            $skippedRows = $importResult['skipped_rows'];
+
+            $sekolahErrors = array_filter($skippedRows, fn($item) => ($item['type'] ?? '') === 'sekolah');
+            $nilaiErrors = array_filter($skippedRows, fn($item) => ($item['type'] ?? '') === 'nilai');
+            
+            $failedSekolahCount = count($sekolahErrors);
+            $failedNilaiCount = count($nilaiErrors);
+            
+            $message = "$successCount data berhasil diimpor, $failedSekolahCount data gagal, $failedNilaiCount nilai salah.";
+            
+            $detailMessages = [];
+            
+            if ($failedSekolahCount > 0) {
+                $sekolahDetails = array_map(function($error) {
+                    return "- baris {$error['row']} ({$error['reason']})";
+                }, $sekolahErrors);
+                
+                $detailMessages[] = "Data salah:\n" . implode("\n", $sekolahDetails);
+            }
+            
+            if ($failedNilaiCount > 0) {
+                $nilaiGrouped = [];
+                foreach ($nilaiErrors as $error) {
+                    $nilaiGrouped[$error['row']][] = $error['kriteria'];
+                }
+                
+                $nilaiDetails = array_map(function($row, $kriterias) {
+                    return "- baris $row (kriteria: " . implode(', ', $kriterias) . ")";
+                }, array_keys($nilaiGrouped), $nilaiGrouped);
+                
+                $detailMessages[] = "Nilai salah:\n" . implode("\n", $nilaiDetails);
+            }
+            
+            $message .= "\n\n" . implode("\n\n", $detailMessages);
+            
+            if (empty($skippedRows)) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => $message
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'warning',
+                    'message' => $message,
+                ]);
+            }
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Data gagal diimpor.'
             ], 500);
         }
     }

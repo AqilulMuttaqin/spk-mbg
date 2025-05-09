@@ -89,6 +89,7 @@
 
     @include('sekolah.form-modal')
     @include('sekolah.nilai-kriteria-sekolah.form-modal')
+    @include('sekolah.nilai-kriteria-sekolah.import-modal')
 
     @include('sekolah.script')
     @include('sekolah.nilai-kriteria-sekolah.script')

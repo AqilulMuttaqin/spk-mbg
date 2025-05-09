@@ -70,5 +70,45 @@
                 }
             });
         });
+
+        $('#importNilaiKriteriaSekolah').on('click', function() {
+            $('#file').val('');
+            $('#importForm').attr('action', "{{ route('sekolah.nilai-kriteria.import') }}");
+            $('#importForm').attr('method', 'POST');
+            $('#importModal').modal('show');
+        });
+
+        $('#importForm').on('submit', function(e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            var url = $(this).attr('action');
+            var method = $(this).attr('method');
+            var currentPage = $('#dataKriteriaSekolah').DataTable().page();
+
+            $.ajax({
+                url: url,
+                type: method,
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    $('#dataKriteriaSekolah').DataTable().ajax.reload();
+                    $('#dataKriteriaSekolah').DataTable().page(currentPage).draw('page');
+                    $('#importModal').modal('hide');
+                    Swal.fire({
+                        title: 'Success',
+                        text: response.message,
+                        icon: response.status,
+                    });
+                },
+                error: function(xhr) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: xhr.responseJSON.message,
+                        icon: 'error',
+                    });
+                }
+            });
+        });
     </script>
 @endpush

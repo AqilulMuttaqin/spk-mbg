@@ -59,6 +59,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/get-kelurahan/{wilayah_kecamatan_id}', 'getKelurahan')->name('getKelurahan');
         
         Route::post('/nilai-kriteria-', 'updateNilaiKriteria')->name('nilai-kriteria.update');
+        Route::post('/import/nilai-kriteria', 'importNilaiKriteria')->name('nilai-kriteria.import');
         Route::get('/export/format-import', 'formatImport')->name('nilai-kriteria.export-format-import');
     });
 
