@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\FormatNilaiKriteriaSekolahExport;
 use App\Models\Kriteria;
 use App\Models\NilaiKriteriaSekolah;
 use App\Models\Sekolah;
@@ -11,6 +12,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\DataTables;
 
 class SekolahController extends Controller
@@ -234,5 +236,10 @@ class SekolahController extends Controller
                 'message' => 'Data nilai gagal diperbarui.'
             ], 500);
         }
+    }
+
+    public function formatImport()
+    {
+        return Excel::download(new FormatNilaiKriteriaSekolahExport(), 'Format Import Nilai Kriteria Sekolah.xlsx');
     }
 }
