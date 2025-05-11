@@ -39,6 +39,8 @@
     <script src="{{ asset('src/js/dataTables.js') }}"></script>
     <script src="{{ asset('src/js/dataTables.bootstrap5.js') }}"></script>
     <script src="{{ asset('src/js/sweetalert2@11.js') }}"></script>
+    <script src="{{ asset('src/js/Chart.min.js') }}"></script>
+    <script src="{{ asset('src/js/chartjs-plugin-datalabels.js') }}"></script>
     <script>
         // GLOBAL SETUP TOKEN
         $.ajaxSetup({
