@@ -8,13 +8,13 @@ use App\Http\Controllers\SekolahController;
 use App\Http\Controllers\WilayahController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
+Route::match(['get', 'head'], '/', function () {
+    if (!auth()->check()) {
+        return redirect()->route('login');
+    } else if (auth()->user()) {
+        return redirect()->route('dashboard');
+    }
 });
-
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

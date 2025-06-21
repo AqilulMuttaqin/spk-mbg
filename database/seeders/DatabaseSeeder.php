@@ -33,8 +33,8 @@ class DatabaseSeeder extends Seeder
             WilayahKecamatanSeeder::class,
             WilayahKelurahanSeeder::class,
             SekolahSeeder::class,
-            NilaiKriteriaWilayahSeeder::class,
-            NilaiKriteriaSekolahSeeder::class,
+            // NilaiKriteriaWilayahSeeder::class,
+            // NilaiKriteriaSekolahSeeder::class,
         ]);
     }
 }

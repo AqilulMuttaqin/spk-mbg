@@ -17,11 +17,18 @@ class UsersSeeder extends Seeder
         $data = [
             [
                 'name' => 'Admin User',
-                'username' => 'admin',
+                // 'username' => 'admin',
                 'email' => 'admin@example.com',
                 'email_verified_at' => now(),
                 'password' => Hash::make('password123'),
-            ]
+            ],
+            // [
+            //     'name' => 'Aqilul',
+            //     'username' => 'aqil16',
+            //     'email' => 'aqilulmuttaqin16@gmail.com',
+            //     'email_verified_at' => now(),
+            //     'password' => Hash::make('password123'),
+            // ],
         ];
 
         DB::table('users')->insert($data);

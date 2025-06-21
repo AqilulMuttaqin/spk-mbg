@@ -43,7 +43,7 @@
         </ul>
         <div class="sidebar-cta text-center">
             <div class="sidebar-cta-content">
-                <img class="img-fluid mb-2" src="{{ asset('src/img/light-logo.png') }}" alt="Logo" style="width: 120px; height: auto;">
+                <img class="img-fluid mb-2 rounded shadow" src="{{ asset('src/img/logo-no-bg.png') }}" alt="Logo" style="width: 120px; height: auto; object-fit: cover; box-shadow: 0 0 15px rgba(0,0,0,0.1);">
                 <strong class="d-inline-block fs-4">Kota Malang</strong>
             </div>
         </div>

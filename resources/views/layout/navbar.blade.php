@@ -19,7 +19,7 @@
                             <div class="ms-3">
                                 <p class="mb-1 fw-bold">{{ Auth::user()->name }}</p>
                                 <p class="mb-0 text-muted small">{{ Auth::user()->email }}</p>
-                                <p class="mb-0 text-muted small">username: {{ Auth::user()->username }}</p>
+                                {{-- <p class="mb-0 text-muted small">username: {{ Auth::user()->username }}</p> --}}
                             </div>
                         </div>
                         <form method="POST" action="{{ route('logout') }}">

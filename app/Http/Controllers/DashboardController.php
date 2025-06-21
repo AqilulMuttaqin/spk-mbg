@@ -59,7 +59,7 @@ class DashboardController extends Controller
             $dataTertinggi[] = [
                 'kriteria' => $item->nama_kriteria,
                 'labelY' => $labelY,
-                'labelX' => $item->kategori,
+                'labelX' => $item->kategori === 'wilayah' ? 'wilayah (kelurahan)' : $item->kategori,
                 'name' => 'chart' . $index + 1,
                 'topData' => $topData,
             ];

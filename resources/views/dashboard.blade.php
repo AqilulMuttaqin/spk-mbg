@@ -10,17 +10,30 @@
                         <div class="card-header">
                             <h5 class="card-title mb-0">Informasi Utama</h5>
                         </div>
-                        <div class="card-body">
-                            <p>Selamat datang di Sistem Informasi Rekomendasi Penentuan SDN Penerima Makan Bergizi Gratis. Sistem ini dirancang untuk membantu dalam mengelola data dan merekomendasikan penerima program makan bergizi gratis menggunakan metode ELECTRE. Anda dapat memantau data, serta mengakses berbagai fitur lainnya sesuai dengan hak akses Anda.</p>
-                            <p>Kriteria yang digunakan saat ini adalah:</p>
-                            <ul class="mb-0">
-                                @foreach ($kriteria as $k)
-                                    <li>{{ $k->nama_kriteria }}</li>
-                                @endforeach
-                            </ul>
+                        <div class="card-body pt-0 mb-0">
+                            <div id="splashCarousel" class="carousel slide mb-3" data-bs-ride="carousel">
+                                <div class="carousel-inner">
+                                    <div class="carousel-item">
+                                        <img src="{{ asset('src/img/mbg-1.jpg') }}" class="d-block mx-auto" style="width: 600px; height: 250px; object-fit: cover;" alt="Splash 1">
+                                    </div>
+                                    <div class="carousel-item">
+                                        <img src="{{ asset('src/img/mbg-2.jpeg') }}" class="d-block mx-auto" style="width: 600px; height: 250px; object-fit: cover;" alt="Splash 2">
+                                    </div>
+                                    <div class="carousel-item active">
+                                        <img src="{{ asset('src/img/mbg-3.jpeg') }}" class="d-block mx-auto" style="width: 600px; height: 250px; object-fit: cover;" alt="Splash 3">
+                                    </div>
+                                </div>
+                                <button class="carousel-control-prev" type="button" data-bs-target="#splashCarousel" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon"></span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#splashCarousel" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon"></span>
+                                </button>
+                            </div>
+                            <p class="mb-0">Selamat datang di Sistem Informasi Rekomendasi Penentuan SDN Penerima Makan Bergizi Gratis. Sistem ini dirancang untuk membantu dalam mengelola data dan merekomendasikan penerima program makan bergizi gratis menggunakan metode ELECTRE. Anda dapat memantau data, serta mengakses berbagai fitur lainnya sesuai dengan hak akses Anda.</p>
                         </div>
                         <div class="card-footer">
-                            <p>Download Panduan Sistem (<a href="">PDF</a>)</p>
+                            <p>Download Panduan Penggunaan Aplikasi (<a href="{{ asset('src/buku-panduan.pdf')}} " target="_blank" rel="noopener noreferrer">PDF</a>)</p>
                         </div>
                     </div>
                 </div>
@@ -29,7 +42,7 @@
                     <div class="d-flex flex-column h-100">
                         <div class="card flex-grow-1">
                             <div class="card-body">
-                                <div class="row">
+                                <div class="row mt-4">
                                     <div class="col-6 d-flex align-items-center justify-content-center">
                                         <img src="{{ asset('src/img/wilayah.png') }}" alt="Logo" style="width: 100px; height: 100px;">
                                     </div>
@@ -43,7 +56,7 @@
                         
                         <div class="card flex-grow-1 mb-0">
                             <div class="card-body">
-                                <div class="row">
+                                <div class="row mt-4">
                                     <div class="col-6 d-flex align-items-center justify-content-center">
                                         <img src="{{ asset('src/img/sekolah.png') }}" alt="Logo" style="width: 100px; height: 100px;">
                                     </div>

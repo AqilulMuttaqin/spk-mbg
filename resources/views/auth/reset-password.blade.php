@@ -1,4 +1,49 @@
-<x-guest-layout>
+@extends('auth.app')
+
+@section('content')
+    <form method="POST" action="{{ route('password.store') }}">
+        @csrf
+
+        <!-- Password Reset Token -->
+        <input type="hidden" name="token" value="{{ $request->route('token') }}">
+
+        <!-- Email Address -->
+        <div class="mb-3">
+            <label class="form-label" for="email">Email</label>
+            <input class="form-control form-control-lg" type="email" name="email" id="email"
+                   value="{{ old('email', $request->email) }}" required autofocus placeholder="Enter your email" />
+            @error('email')
+                <div class="text-danger mt-1">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <!-- Password -->
+        <div class="mb-3">
+            <label class="form-label" for="password">Password</label>
+            <input class="form-control form-control-lg" type="password" name="password" id="password"
+                   required placeholder="Enter your new password" />
+            @error('password')
+                <div class="text-danger mt-1">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="mb-3">
+            <label class="form-label" for="password_confirmation">Confirm Password</label>
+            <input class="form-control form-control-lg" type="password" name="password_confirmation"
+                   id="password_confirmation" required placeholder="Confirm your new password" />
+            @error('password_confirmation')
+                <div class="text-danger mt-1">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <!-- Submit Button -->
+        <div class="d-grid gap-2 mt-3">
+            <button type="submit" class="btn btn-lg btn-primary">Reset Password</button>
+        </div>
+    </form>
+@endsection
+{{-- <x-guest-layout>
     <form method="POST" action="{{ route('password.store') }}">
         @csrf
 
@@ -36,4 +81,4 @@
             </x-primary-button>
         </div>
     </form>
-</x-guest-layout>
+</x-guest-layout> --}}
