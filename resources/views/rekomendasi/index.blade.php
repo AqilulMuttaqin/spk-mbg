@@ -34,7 +34,7 @@
                                                     <th>Nama Sekolah</th>
                                                     <th>Wilayah</th>
                                                     @foreach ($kriteria as $k)
-                                                        <th>{{ $k->nama_kriteria }}</th>
+                                                        <th>{{ $k->nama_kriteria }} (C{{ $loop->index + 1 }})</th>
                                                     @endforeach
                                                 </tr>
                                             </thead>
@@ -51,7 +51,7 @@
                                                 <tr>
                                                     <th>Alternatif</th>
                                                     @foreach ($kriteria as $k)
-                                                        <th>{{ $k->nama_kriteria }}</th>
+                                                        <th>C{{ $loop->index + 1 }}</th>
                                                     @endforeach
                                                 </tr>
                                             </thead>
@@ -68,7 +68,7 @@
                                                 <tr>
                                                     <th>Alternatif</th>
                                                     @foreach ($kriteria as $k)
-                                                        <th>{{ $k->nama_kriteria }}</th>
+                                                        <th>C{{ $loop->index + 1 }}</th>
                                                     @endforeach
                                                 </tr>
                                             </thead>
@@ -85,7 +85,7 @@
                                                 <tr>
                                                     <th>Alternatif</th>
                                                     @foreach ($kriteria as $k)
-                                                        <th>{{ $k->nama_kriteria }}</th>
+                                                        <th>C{{ $loop->index + 1 }}</th>
                                                     @endforeach
                                                 </tr>
                                             </thead>

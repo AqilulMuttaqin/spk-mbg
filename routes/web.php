@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ElectreIElectreIIController;
+use App\Http\Controllers\ElectreIIIController;
 use App\Http\Controllers\KriteriaController;
 use App\Http\Controllers\PerhitunganRekomendasiController;
 use App\Http\Controllers\ProfileController;
@@ -60,7 +62,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/export/format-import', 'formatImport')->name('nilai-kriteria.export-format-import');
     });
 
-    Route::get('/rekomendasi', [PerhitunganRekomendasiController::class, 'index'])->name('rekomendasi.index');
+    Route::get('/rekomendasi-electre-i', [ElectreIElectreIIController::class, 'electreI'])->name('rekomendasi.electre-i');
+    Route::get('/rekomendasi-electre-ii', [ElectreIElectreIIController::class, 'electreII'])->name('rekomendasi.electre-ii');
+    Route::get('/rekomendasi-electre-iii', [ElectreIIIController::class, 'index'])->name('rekomendasi.electre-iii');
 });
 
 require __DIR__.'/auth.php';

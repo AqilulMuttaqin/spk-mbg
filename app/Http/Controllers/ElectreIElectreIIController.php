@@ -9,9 +9,9 @@ use App\Models\Sekolah;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
-class PerhitunganRekomendasiController extends Controller
+class ElectreIElectreIIController extends Controller
 {
-    public function index(Request $request)
+    public function electreI(Request $request)
     {
         $sekolah = Sekolah::with(['wilayahKelurahan', 'wilayahKelurahan.wilayahKecamatan'])->get();
         $kriteria = Kriteria::all();
@@ -57,20 +57,19 @@ class PerhitunganRekomendasiController extends Controller
         );
 
         if ($request->ajax()) {
-            return $this->handleAjaxRequests(
+            return $this->handleAjaxRequestsElectreI(
                 $request,
                 $dataAwal,
                 $matriksKeputusan,
                 $normalisasi,
                 $bobotTernormalisasi,
                 $concordanceResults,
-                $discordanceResults,
-                $rankingResults
+                $discordanceResults
             );
         }
 
-        return view('rekomendasi.index', [
-            'title' => 'Rekomendasi',
+        return view('rekomendasi.electre-i', [
+            'title' => 'Perhitungan Electre I',
             'kriteria' => $kriteria,
             'jumlahData' => count($sekolah),
             'concordanceValue' => $concordanceResults['concordanceValue'],
@@ -82,6 +81,67 @@ class PerhitunganRekomendasiController extends Controller
             'concordanceDominanValue' => $thresholdResults['concordanceDominanValue'],
             'discordanceDominanValue' => $thresholdResults['discordanceDominanValue'],
             'agregatDominanValue' => $thresholdResults['agregatDominanValue'],
+            'sekolahTerbaik' => $rankingResults,
+        ]);
+    }
+
+    public function electreII(Request $request)
+    {
+        $sekolah = Sekolah::with(['wilayahKelurahan', 'wilayahKelurahan.wilayahKecamatan'])->get();
+        $kriteria = Kriteria::all();
+        $nilaiKriteriaSekolah = NilaiKriteriaSekolah::all();
+        $nilaiKriteriaWilayah = NilaiKriteriaWilayah::all();
+
+        // Step 1: Data Awal
+        $dataAwal = $this->prepareInitialData($sekolah, $kriteria, $nilaiKriteriaSekolah, $nilaiKriteriaWilayah);
+
+        // Cek Data Kosong
+        if ($this->hasEmptyData($dataAwal)) {
+            return view('rekomendasi.error', [
+                'title' => 'Rekomendasi',
+                'message' => 'Terdapat data kosong pada nilai kriteria. Silakan lengkapi data terlebih dahulu.',
+            ]);
+        }
+
+        // Step 2: Matriks Keputusan
+        $matriksKeputusan = $this->prepareDecisionMatrix($sekolah, $kriteria, $nilaiKriteriaSekolah, $nilaiKriteriaWilayah);
+
+        // Step 3: Normalisasi Matriks Keputusan
+        $normalisasi = $this->calculateNormalization($matriksKeputusan, $kriteria);
+
+        // Step 4: Bobot Ternormalisasi
+        $bobotTernormalisasi = $this->calculateWeightedNormalization($normalisasi, $kriteria);
+
+        // Step 5: Concordance dan Discordance Values
+        $concordanceResults = $this->calculateConcordance($bobotTernormalisasi, $kriteria);
+        $discordanceResults = $this->calculateDiscordance($bobotTernormalisasi, $kriteria);
+
+        // Step 6: Perangkingan
+        $rankingResults = $this->calculateElectreIIRanking(
+            $concordanceResults['concordanceValue'],
+            $discordanceResults['discordanceValue'],
+            $sekolah
+        );
+
+        if ($request->ajax()) {
+            return $this->handleAjaxRequestsElectreII(
+                $request,
+                $dataAwal,
+                $matriksKeputusan,
+                $normalisasi,
+                $bobotTernormalisasi,
+                $concordanceResults,
+                $discordanceResults,
+                $rankingResults
+            );
+        }
+
+        return view('rekomendasi.electre-ii', [
+            'title' => 'Perhitungan Electre II',
+            'kriteria' => $kriteria,
+            'jumlahData' => count($sekolah),
+            'concordanceValue' => $concordanceResults['concordanceValue'],
+            'discordanceValue' => $discordanceResults['discordanceValue'],
         ]);
     }
 
@@ -181,10 +241,8 @@ class PerhitunganRekomendasiController extends Controller
     {
         $bobotTernormalisasi = [];
 
-        // Hitung total bobot untuk memastikan normalisasi
         $totalBobot = $kriteria->sum('bobot');
 
-        // Jika total bobot tidak 100%, normalisasi bobot
         $normalizedWeights = [];
         if ($totalBobot != 100) {
             foreach ($kriteria as $k) {
@@ -212,11 +270,9 @@ class PerhitunganRekomendasiController extends Controller
         $concordanceValue = [];
         $jumlahAlternatif = count($bobotTernormalisasi);
 
-        // Hitung total bobot untuk normalisasi
         $totalBobot = $kriteria->sum('bobot');
 
         foreach ($kriteria as $k) {
-            // Normalisasi bobot jika total tidak 100%
             $k->normalized_bobot = ($totalBobot != 100) ? ($k->bobot / $totalBobot) * 100 : $k->bobot;
         }
 
@@ -234,7 +290,6 @@ class PerhitunganRekomendasiController extends Controller
                         $kriteriaItem = $kriteria->where('nama_kriteria', $namaKriteria)->first();
                         if ($kriteriaItem) {
                             $setCKriteria[] = $kriteriaItem->id;
-                            // Gunakan bobot yang sudah dinormalisasi
                             $nilaiCij += ($kriteriaItem->normalized_bobot / 100);
                         }
                     }
@@ -364,55 +419,34 @@ class PerhitunganRekomendasiController extends Controller
         $totalAgregat = [];
         foreach ($agregatDominanValue as $pasangan => $nilai) {
             [$alt1, $alt2] = explode('-', $pasangan);
-
             if (!isset($totalAgregat[$alt1])) {
                 $totalAgregat[$alt1] = 0;
             }
             $totalAgregat[$alt1] += $nilai;
         }
 
-        $daftarAlternatif = $sekolah->map(function ($sek, $index) {
-            return [
-                'alternatif' => 'A' . ($index + 1),
-                'sekolah' => $sek->nama_sekolah,
-                'sekolah_id' => $sek->id,
-                'wilayah_kelurahan_id' => $sek->wilayah_kelurahan_id,
-            ];
-        })->toArray();
-
-        // Dapatkan kriteria dengan bobot terbesar untuk tie-breaking
         $kriteria = Kriteria::orderBy('bobot', 'desc')->first();
-        $kriteriaBobot = Kriteria::all();
-
-        // Hitung total bobot untuk normalisasi jika diperlukan
-        $totalBobot = $kriteriaBobot->sum('bobot');
-
         $nilaiKriteriaSekolah = NilaiKriteriaSekolah::all();
         $nilaiKriteriaWilayah = NilaiKriteriaWilayah::all();
 
         $hasilRanking = [];
-        foreach ($daftarAlternatif as $i => $alt) {
-            $no = $i + 1;
-            $total = $totalAgregat[$no] ?? 0;
-
-            // Ambil nilai kriteria dengan bobot terbesar untuk tie-breaking
+        foreach ($sekolah as $i => $sek) {
+            $altNo = $i + 1;
             $nilaiTieBreaker = 0;
+
             if ($kriteria) {
                 if ($kriteria->kategori == 'sekolah') {
-                    $nilai = $nilaiKriteriaSekolah->where('sekolah_id', $alt['sekolah_id'])
+                    $nilai = $nilaiKriteriaSekolah->where('sekolah_id', $sek->id)
                         ->where('kriteria_id', $kriteria->id)
                         ->first();
                 } else {
-                    $nilai = $nilaiKriteriaWilayah->where('wilayah_kelurahan_id', $alt['wilayah_kelurahan_id'])
+                    $nilai = $nilaiKriteriaWilayah->where('wilayah_kelurahan_id', $sek->wilayah_kelurahan_id)
                         ->where('kriteria_id', $kriteria->id)
                         ->first();
                 }
 
                 if ($nilai && $nilai->nilai !== null) {
                     $nilaiTieBreaker = floatval($nilai->nilai);
-
-                    // Jika kriteria adalah cost, kita invert nilainya untuk ranking
-                    // (nilai lebih kecil lebih baik untuk cost, jadi kita buat negatif)
                     if ($kriteria->sifat == 'cost') {
                         $nilaiTieBreaker = -$nilaiTieBreaker;
                     }
@@ -420,38 +454,200 @@ class PerhitunganRekomendasiController extends Controller
             }
 
             $hasilRanking[] = [
-                'alternatif' => $alt['alternatif'],
-                'sekolah' => $alt['sekolah'],
-                'total_agregat' => $total,
+                'alternatif' => 'A' . $altNo,
+                'sekolah' => $sek->nama_sekolah,
+                'wilayah' => 'Kel. ' . $sek->wilayahKelurahan->nama_kelurahan . ', Kec. ' . $sek->wilayahKelurahan->wilayahKecamatan->nama_kecamatan,
+                'total_agregat' => $totalAgregat[$altNo] ?? 0,
                 'tie_breaker_value' => $nilaiTieBreaker,
             ];
         }
 
-        // Sorting dengan tie-breaking
+        // Urutkan descending by total agregat, lalu tie breaker
         usort($hasilRanking, function ($a, $b) {
-            // Pertama, bandingkan berdasarkan total agregat
-            $totalComparison = $b['total_agregat'] <=> $a['total_agregat'];
-
-            // Jika total agregat sama, gunakan nilai kriteria bobot terbesar sebagai tie-breaker
-            if ($totalComparison === 0) {
-                return $b['tie_breaker_value'] <=> $a['tie_breaker_value'];
-            }
-
-            return $totalComparison;
+            $cmp = $b['total_agregat'] <=> $a['total_agregat'];
+            return $cmp === 0 ? $b['tie_breaker_value'] <=> $a['tie_breaker_value'] : $cmp;
         });
 
-        // Assign ranking berurutan (tidak ada ranking kembar karena sudah ada tie-breaking)
-        foreach ($hasilRanking as $i => &$item) {
-            $item['ranking'] = $i + 1;
+        // Ambil hanya yang terbaik
+        $terbaik = $hasilRanking[0] ?? null;
 
-            // Hapus tie_breaker_value dari hasil akhir (optional, untuk menjaga struktur data)
-            unset($item['tie_breaker_value']);
+        if ($terbaik) {
+            $terbaik['ranking'] = 1;
+            unset($terbaik['tie_breaker_value']);
         }
 
-        return $hasilRanking;
+
+        return $terbaik;
     }
 
-    private function handleAjaxRequests(
+
+    private function calculateElectreIIRanking($concordanceValue, $discordanceValue, $sekolah)
+    {
+        $jumlahAlternatif = count($sekolah);
+
+        $concordanceMurni = [];
+        $discordanceMurni = [];
+
+        for ($i = 1; $i <= $jumlahAlternatif; $i++) {
+            $outgoingC = 0;
+            $incomingC = 0;
+            $outgoingD = 0;
+            $incomingD = 0;
+
+            for ($j = 1; $j <= $jumlahAlternatif; $j++) {
+                if ($i == $j) continue;
+
+                $keyOut = "c{$i}-{$j}";
+                $keyIn = "c{$j}-{$i}";
+
+                $outgoingC += $concordanceValue[$keyOut] ?? 0;
+                $incomingC += $concordanceValue[$keyIn] ?? 0;
+
+                $keyOutD = "d{$i}-{$j}";
+                $keyInD = "d{$j}-{$i}";
+
+                $outgoingD += $discordanceValue[$keyOutD] ?? 0;
+                $incomingD += $discordanceValue[$keyInD] ?? 0;
+            }
+
+            $concordanceMurni[$i] = round($outgoingC - $incomingC, 3);
+            $discordanceMurni[$i] = round($outgoingD - $incomingD, 3);
+        }
+
+        // Ambil info alternatif
+        $daftarAlternatif = $sekolah->map(function ($sek, $index) {
+            return [
+                'no' => $index + 1,
+                'alternatif' => 'A' . ($index + 1),
+                'sekolah' => $sek->nama_sekolah,
+                'sekolah_id' => $sek->id,
+                'wilayah_kelurahan_id' => $sek->wilayah_kelurahan_id,
+            ];
+        })->toArray();
+
+        // Ambil tie breaker
+        $kriteriaUtama = Kriteria::orderBy('bobot', 'desc')->first();
+        $nilaiKriteriaSekolah = NilaiKriteriaSekolah::all();
+        $nilaiKriteriaWilayah = NilaiKriteriaWilayah::all();
+
+        $hasil = [];
+        foreach ($daftarAlternatif as $alt) {
+            $tieBreaker = 0;
+
+            if ($kriteriaUtama) {
+                if ($kriteriaUtama->kategori === 'sekolah') {
+                    $nilai = $nilaiKriteriaSekolah
+                        ->where('sekolah_id', $alt['sekolah_id'])
+                        ->where('kriteria_id', $kriteriaUtama->id)
+                        ->first();
+                } else {
+                    $nilai = $nilaiKriteriaWilayah
+                        ->where('wilayah_kelurahan_id', $alt['wilayah_kelurahan_id'])
+                        ->where('kriteria_id', $kriteriaUtama->id)
+                        ->first();
+                }
+
+                if ($nilai && $nilai->nilai !== null) {
+                    $tieBreaker = floatval($nilai->nilai);
+                    if ($kriteriaUtama->sifat === 'cost') {
+                        $tieBreaker *= -1;
+                    }
+                }
+            }
+
+            $no = $alt['no'];
+
+            $hasil[] = [
+                'alternatif' => $alt['alternatif'],
+                'sekolah' => $alt['sekolah'],
+                'c_murni' => $concordanceMurni[$no],
+                'd_murni' => $discordanceMurni[$no],
+                'tie_breaker' => $tieBreaker,
+            ];
+        }
+
+        // Rank Concordance (semakin tinggi semakin baik)
+        usort($hasil, function ($a, $b) {
+            $cmp = $b['c_murni'] <=> $a['c_murni'];
+            return $cmp === 0 ? $b['tie_breaker'] <=> $a['tie_breaker'] : $cmp;
+        });
+        foreach ($hasil as $i => &$row) {
+            $row['rank_c'] = $i + 1;
+        }
+
+        // Rank Discordance (semakin kecil semakin baik)
+        usort($hasil, function ($a, $b) {
+            $cmp = $a['d_murni'] <=> $b['d_murni'];
+            return $cmp === 0 ? $b['tie_breaker'] <=> $a['tie_breaker'] : $cmp;
+        });
+        foreach ($hasil as $i => &$row) {
+            $row['rank_d'] = $i + 1;
+        }
+
+        // Avg rank + final ranking
+        foreach ($hasil as &$row) {
+            $row['avg_rank'] = round(($row['rank_c'] + $row['rank_d']) / 2, 2);
+        }
+
+        usort($hasil, function ($a, $b) {
+            $cmp = $a['avg_rank'] <=> $b['avg_rank'];
+            return $cmp === 0 ? $b['tie_breaker'] <=> $a['tie_breaker'] : $cmp;
+        });
+
+        foreach ($hasil as $i => &$row) {
+            $row['final_rank'] = $i + 1;
+            unset($row['tie_breaker']);
+        }
+
+        return $hasil;
+    }
+
+
+    private function handleAjaxRequestsElectreI(
+        $request,
+        $dataAwal,
+        $matriksKeputusan,
+        $normalisasi,
+        $bobotTernormalisasi,
+        $concordanceResults,
+        $discordanceResults
+    ) {
+        if ($request->get('type') == 'dataAwal') {
+            return DataTables::of($dataAwal)->make(true);
+        }
+        if ($request->get('type') == 'matriksKeputusan') {
+            return DataTables::of($matriksKeputusan)
+                ->addColumn('alternatif', function ($row) {
+                    static $i = 1;
+                    return 'A' . $i++;
+                })
+                ->make(true);
+        }
+        if ($request->get('type') == 'normalisasi') {
+            return DataTables::of($normalisasi)
+                ->addColumn('alternatif', function ($row) {
+                    static $i = 1;
+                    return 'A' . $i++;
+                })
+                ->make(true);
+        }
+        if ($request->get('type') == 'bobotTernormalisasi') {
+            return DataTables::of($bobotTernormalisasi)
+                ->addColumn('alternatif', function ($row) {
+                    static $i = 1;
+                    return 'A' . $i++;
+                })
+                ->make(true);
+        }
+        if ($request->get('type') == 'concordanceIndex') {
+            return DataTables::of($concordanceResults['consordanceIndex'])->make(true);
+        }
+        if ($request->get('type') == 'discordanceIndex') {
+            return DataTables::of($discordanceResults['discordanceIndex'])->make(true);
+        }
+    }
+
+    private function handleAjaxRequestsElectreII(
         $request,
         $dataAwal,
         $matriksKeputusan,
